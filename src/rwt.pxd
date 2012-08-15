@@ -1,4 +1,4 @@
-cdef extern from "mdwt_r.c":
+cdef extern from "rwt.h":
 
     void MDWT(
         double *x,

@@ -68,12 +68,15 @@ decription of the matlab call:
 #include <math.h>
 #include <stdio.h>
 
+#include "rwt.h"
+
+
 #define max(A,B) (A > B ? A : B)
 #define mat(a, i, j) (*(a + (m*(j)+i)))  /* macro for matrix indices */
 
 
 #ifdef __STDC__
-MIDWT(double *x, int m, int n, double *h, int lh, int L, double *y)
+void MIDWT(double *x, int m, int n, double *h, int lh, int L, double *y)
 #else
 MIDWT(x, m, n, h, lh, L, y)
 double *x, *h, *y;
@@ -161,7 +164,7 @@ int m, n, lh, L;
 }
 
 #ifdef __STDC__
-bpsconv(double *x_out, int lx, double *g0, double *g1, int lhm1, 
+void bpsconv(double *x_out, int lx, double *g0, double *g1, int lhm1, 
 	int lhhm1, double *x_inl, double *x_inh)
 #else
 bpsconv(x_out, lx, g0, g1, lhm1, lhhm1, x_inl, x_inh)

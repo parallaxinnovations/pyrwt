@@ -64,11 +64,14 @@ Change History: Fixed the code such that 1D vectors passed to it can be in
 #include <math.h>
 #include <stdio.h>
 
+#include "rwt.h"
+
+
 #define max(A,B) (A > B ? A : B)
 #define mat(a, i, j) (*(a + (m*(j)+i)))  /* macro for matrix indices */
 
 #ifdef __STDC__
-MDWT(double *x, int m, int n, double *h, int lh, int L, double *y)
+void MDWT(double *x, int m, int n, double *h, int lh, int L, double *y)
 #else
 MDWT(x, m, n, h, lh, L, y)
 double *x, *h, *y;
@@ -147,10 +150,14 @@ int m, n, lh, L;
       }
     }
   }
+  
+  free((char *)xdummy);
+  free((char *)ydummyl);
+  free((char *)ydummyh);
 }
 
 #ifdef __STDC__
-fpsconv(double *x_in, int lx, double *h0, double *h1, int lhm1, 
+void fpsconv(double *x_in, int lx, double *h0, double *h1, int lhm1, 
 	double *x_outl, double *x_outh)
 #else
 fpsconv(x_in, lx, h0, h1, lhm1, x_outl, x_outh)

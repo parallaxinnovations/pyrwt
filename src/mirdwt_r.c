@@ -75,11 +75,14 @@ MATLAB description:
 #include <math.h>
 #include <stdio.h>
 
+#include "rwt.h"
+
+
 #define max(a, b) ((a) > (b) ? (a) : (b))
 #define mat(a, i, j) (*(a + (m*(j)+i)))  /* macro for matrix indices */
 
 #ifdef __STDC__
-MIRDWT(double *x, int m, int n, double *h, int lh, int L,
+void MIRDWT(double *x, int m, int n, double *h, int lh, int L,
        double *yl, double *yh)
 #else
 MIRDWT(x, m, n, h, lh, L, yl, yh)
@@ -193,7 +196,7 @@ int m, n, lh, L;
 }
 
 #ifdef __STDC__
-bpconv(double *x_out, int lx, double *g0, double *g1, int lh,
+void bpconv(double *x_out, int lx, double *g0, double *g1, int lh,
        double *x_inl, double *x_inh)
 #else
 bpconv(x_out, lx, g0, g1, lh, x_inl, x_inh)
