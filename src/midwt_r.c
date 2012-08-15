@@ -67,6 +67,7 @@ decription of the matlab call:
 
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "rwt.h"
 
@@ -84,13 +85,13 @@ int m, n, lh, L;
 #endif
 {
   double  *g0, *g1, *ydummyl, *ydummyh, *xdummy;
-  long i, j;
+  long i;
   int actual_L, actual_m, actual_n, r_o_a, c_o_a, ir, ic, lhm1, lhhm1, sample_f;
-  xdummy = (double *)mxCalloc(max(m,n),sizeof(double));
-  ydummyl = (double *)mxCalloc(max(m,n)+lh/2-1,sizeof(double));
-  ydummyh = (double *)mxCalloc(max(m,n)+lh/2-1,sizeof(double));
-  g0 = (double *)mxCalloc(lh,sizeof(double));
-  g1 = (double *)mxCalloc(lh,sizeof(double));
+  xdummy = (double *)calloc(max(m,n),sizeof(double));
+  ydummyl = (double *)calloc(max(m,n)+lh/2-1,sizeof(double));
+  ydummyh = (double *)calloc(max(m,n)+lh/2-1,sizeof(double));
+  g0 = (double *)calloc(lh,sizeof(double));
+  g1 = (double *)calloc(lh,sizeof(double));
 
   if (n==1){
     n = m;
@@ -161,6 +162,12 @@ int m, n, lh, L;
       actual_m = actual_m*2;
     actual_n = actual_n*2;
   }
+  
+  free((void *)xdummy);
+  free((void *)ydummyl);
+  free((void *)ydummyh);
+  free((void *)g0);
+  free((void *)g1);
 }
 
 #ifdef __STDC__

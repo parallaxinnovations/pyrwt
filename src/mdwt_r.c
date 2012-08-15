@@ -63,6 +63,7 @@ Change History: Fixed the code such that 1D vectors passed to it can be in
 
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "rwt.h"
 
@@ -79,7 +80,7 @@ int m, n, lh, L;
 #endif
 {
   double  *h0, *h1, *ydummyl, *ydummyh, *xdummy;
-  long i, j;
+  long i;
   int actual_L, actual_m, actual_n, r_o_a, c_o_a, ir, ic, lhm1;
   xdummy = (double *)calloc(max(m,n)+lh-1,sizeof(double));
   ydummyl = (double *)calloc(max(m,n),sizeof(double));
@@ -151,9 +152,11 @@ int m, n, lh, L;
     }
   }
   
-  free((char *)xdummy);
-  free((char *)ydummyl);
-  free((char *)ydummyh);
+  free((void *)xdummy);
+  free((void *)ydummyl);
+  free((void *)ydummyh);
+  free((void *)h0);
+  free((void *)h1);
 }
 
 #ifdef __STDC__

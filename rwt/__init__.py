@@ -10,5 +10,5 @@ pyrwt - A cython wrapper for the IRice Wavelet Toolbox
 #
 # License: EPL.
 
-from pyrwt import *
+from cyrwt import mdwt, midwt
 

@@ -39,7 +39,7 @@ def main():
         ext_modules = [
             Extension(
                 PACKAGE_NAME + '.' + 'cyrwt',
-                ['src/cyrwt.pyx'],
+                ['src/cyrwt.pyx', 'src/mdwt_r.c', 'src/midwt_r.c'],
                 include_dirs=IPOPT_ICLUDE_DIRS
             )
         ],
