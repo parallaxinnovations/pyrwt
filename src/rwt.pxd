@@ -20,3 +20,25 @@ cdef extern from "rwt.h":
         double *y
         )
         
+    void MRDWT(
+        double *x,
+        int m,
+        int n,
+        double *h,
+        int lh,
+        int L,
+        double *yl,
+        double *yh
+        )
+
+    void MIRDWT(
+        double *x,
+        int m,
+        int n,
+        double *h,
+        int lh,
+        int L,
+        double *yl,
+        double *yh
+        )
+

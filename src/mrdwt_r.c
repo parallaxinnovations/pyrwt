@@ -73,6 +73,7 @@ MATLAB description:
 
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "rwt.h"
 
@@ -90,20 +91,19 @@ double *x, *h, *yl, *yh;
 int m, n, lh, L;
 #endif
 {
-  double *tmp;
   double  *h0, *h1, *ydummyll, *ydummylh, *ydummyhl;
   double *ydummyhh, *xdummyl , *xdummyh;
-  long i, j;
-  int actual_L, actual_m, actual_n, c_o_a, ir, n_c, n_cb, n_c_o;
-  int ic, n_r, n_rb, n_r_o, c_o_a_p2n, sample_f;
-  xdummyl = (double *)mxCalloc(max(m,n)+lh-1,sizeof(double));
-  xdummyh = (double *)mxCalloc(max(m,n)+lh-1,sizeof(double));
-  ydummyll = (double *)mxCalloc(max(m,n),sizeof(double));
-  ydummylh = (double *)mxCalloc(max(m,n),sizeof(double));
-  ydummyhl = (double *)mxCalloc(max(m,n),sizeof(double));
-  ydummyhh = (double *)mxCalloc(max(m,n),sizeof(double));
-  h0 = (double *)mxCalloc(lh,sizeof(double));
-  h1 = (double *)mxCalloc(lh,sizeof(double));
+  long i;
+  int actual_L, actual_m, actual_n, c_o_a, ir, n_c, n_cb;
+  int ic, n_r, n_rb, c_o_a_p2n, sample_f;
+  xdummyl = (double *)calloc(max(m,n)+lh-1,sizeof(double));
+  xdummyh = (double *)calloc(max(m,n)+lh-1,sizeof(double));
+  ydummyll = (double *)calloc(max(m,n),sizeof(double));
+  ydummylh = (double *)calloc(max(m,n),sizeof(double));
+  ydummyhl = (double *)calloc(max(m,n),sizeof(double));
+  ydummyhh = (double *)calloc(max(m,n),sizeof(double));
+  h0 = (double *)calloc(lh,sizeof(double));
+  h1 = (double *)calloc(lh,sizeof(double));
 
   if (n==1){
     n = m;
@@ -185,6 +185,15 @@ int m, n, lh, L;
     }
     sample_f = sample_f*2;
   }
+  
+  free((void *)xdummyl);
+  free((void *)xdummyh);
+  free((void *)ydummyll);
+  free((void *)ydummylh);
+  free((void *)ydummyhl);
+  free((void *)ydummyhh);
+  free((void *)h0);
+  free((void *)h1);
 }
 
 #ifdef __STDC__
