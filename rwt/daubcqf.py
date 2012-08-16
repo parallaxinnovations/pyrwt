@@ -1,5 +1,6 @@
 from __future__ import division
 import numpy as np
+import scipy as sp
 
 
 def daubcqf(N, TYPE='min'):
@@ -31,40 +32,59 @@ def daubcqf(N, TYPE='min'):
 
     assert N%2==0, 'No Daubechies filter exists for ODD length'
 
-    K = N/2
+    K = int(N/2)
     a = 1
     p = 1
     q = 1
     
-    """
-    h_0 = [1 1];
+    h_0 = np.array([1.0, 1.0])
     for j in range(1, K):
         a = -a * 0.25 * (j + K - 1)/j
-        h_0 = [0 h_0] + [h_0 0];
-        p = [0 -p] + [p 0]
-        p = [0 -p] + [p 0]
-        q = [0 q 0] + a * p
+        h_0 = np.hstack((0, h_0)) + np.hstack((h_0, 0))
+        p = np.hstack((0, -p)) + np.hstack((p, 0))
+        p = np.hstack((0, -p)) + np.hstack((p, 0))
+        q = np.hstack((0, q, 0)) + a * p
 
-    q = sort(roots(q));
-    qt = q(1:K-1);
+    q = np.sort(np.roots(q))
+    
+    qt = q[:K-1]
     
     if TYPE == 'mid':
-      if rem(K,2)==1,  
-        qt = q([1:4:N-2 2:4:N-2]);
-      else
-        qt = q([1 4:4:K-1 5:4:K-1 N-3:-4:K N-4:-4:K]);
-      end;
-    end;
-    h_0 = conv(h_0,real(poly(qt)));
-    h_0 = sqrt(2)*h_0/sum(h_0); 	%Normalize to sqrt(2);
-    if(TYPE=='max'),
-      h_0 = fliplr(h_0);
-    end;
-    if(abs(sum(h_0 .^ 2))-1 > 1e-4) 
-      error('Numerically unstable for this value of "N".');
-    end;
-    h_1 = rot90(h_0,2);
-    h_1(1:2:N)=-h_1(1:2:N);
-    """
+        if K%2==1:
+            ind = np.hstack((np.arange(0, N-2, 4), np.arange(1, N-2, 4)))
+        else:
+            ind = np.hstack(
+                (
+                    1,
+                    np.arange(3, K-1, 4),
+                    np.arange(4, K-1, 4),
+                    np.arange(N-3, K, -4),
+                    np.arange(N-4, K, -4)
+                )
+            )
+        qt = q[ind]
+
+    h_0 = np.convolve(h_0, np.real(np.poly(qt)))
+    h_0 = np.sqrt(2) * h_0 / np.sum(h_0)
+    
+    h_0.shape = (1, -1)
+    
+    if TYPE=='max':
+        h_0 = sp.fliplr(h_0);
+
+    assert np.abs(np.sum(h_0 ** 2))-1 < 1e-4, 'Numerically unstable for this value of "N".'
+
+    h_1 = sp.rot90(h_0, 2).copy()
+    h_1[0, :N:2] = -h_1[0, :N:2]
 
     return (h_0, h_1)
+
+
+if __name__ == '__main__':
+    
+    N = 4
+    TYPE = 'min'
+    h_0, h_1 = daubcqf(N, TYPE)
+    print h_0
+    print h_1
+    

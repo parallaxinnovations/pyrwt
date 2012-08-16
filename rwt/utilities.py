@@ -74,7 +74,7 @@ def softThreshold(y, thld):
 
 def makesig(SigName='AllSig', N=512):
     """
- [x,N] = makesig(SigName,N) Creates artificial test signal identical to the
+     Creates artificial test signal identical to the
      standard test signals proposed and used by D. Donoho and I. Johnstone
      in WaveLab (- a matlab toolbox developed by Donoho et al. the statistics
      department at Stanford University).
@@ -110,58 +110,56 @@ def makesig(SigName='AllSig', N=512):
             web_url: http://playfair.stanford.edu/
     """
 
-    """
-t = (1:N) ./N;
-x = [];
-y = [];
-if(strcmp(SigName,'HeaviSine') | strcmp(SigName,'AllSig')),
-  y = 4.*sin(4*pi.*t);
-  y = y - sign(t - .3) - sign(.72 - t);
-end;
-x = [x;y];
-y = [];
-if(strcmp(SigName,'Bumps') | strcmp(SigName,'AllSig')),
-  pos = [ .1 .13 .15 .23 .25 .40 .44 .65  .76 .78 .81];
-  hgt = [ 4  5   3   4  5  4.2 2.1 4.3  3.1 5.1 4.2];
-  wth = [.005 .005 .006 .01 .01 .03 .01 .01  .005 .008 .005];
-  y = zeros(size(t));
-  for j =1:length(pos)
-    y = y + hgt(j)./( 1 + abs((t - pos(j))./wth(j))).^4;
-  end 
-end;
-x = [x;y];
-y = [];
-if(strcmp(SigName,'Blocks') | strcmp(SigName,'AllSig')),
-  pos = [ .1 .13 .15 .23 .25 .40 .44 .65  .76 .78 .81];
-  hgt = [4 (-5) 3 (-4) 5 (-4.2) 2.1 4.3  (-3.1) 2.1 (-4.2)];
-  y = zeros(size(t));
-  for j=1:length(pos)
-    y = y + (1 + sign(t-pos(j))).*(hgt(j)/2) ;
-  end
-end;
-x = [x;y];
-y = [];
-if(strcmp(SigName,'Doppler') | strcmp(SigName,'AllSig')),
-  y = sqrt(t.*(1-t)).*sin((2*pi*1.05) ./(t+.05));
-end;
-x = [x;y];
-y = [];
-if(strcmp(SigName,'Ramp') | strcmp(SigName,'AllSig')),
-  y = t - (t >= .37);
-end;
-x = [x;y];
-y = [];
-if(strcmp(SigName,'Cusp') | strcmp(SigName,'AllSig')),
-  y = sqrt(abs(t - .37));
-end;
-x = [x;y];
-y = [];
-if(strcmp(SigName,'Sing') | strcmp(SigName,'AllSig')),
-  k = floor(N * .37);
-  y = 1 ./abs(t - (k+.5)/N);
-end;
-x = [x;y];
-y = [];
+    t = np.linspace(1, N, N)/N
+    x = np.zeros_like(t)
+    
+    if SigName in ('HeaviSine', 'AllSig'):
+        y = 4 * np.sin(4*np.pi*t) - np.sign(t - 0.3) - sign(0.72 - t)
+        
+        x = np.vstack((x, y))
+    
+    if SigName in ('Bumps', 'AllSig'):
+        pos = np.array([ .1, .13, .15, .23, .25, .40, .44, .65, .76, .78, .81])
+        hgt = np.array([ 4,  5,   3,   4,  5,  4.2, 2.1, 4.3,  3.1, 5.1, 4.2])
+        wth = np.array([.005, .005, .006, .01, .01, .03, .01, .01,  .005, .008, .005])
+        y = np.zeros_like(t)
+        for p, h, w in zip(pos, hgt, wth):
+            y += h/(1 + np.abs((t - p)/w))**4
+
+        x = np.vstack((x, y))
+    
+    if SigName in ('Blocks', 'AllSig'):
+        pos = np.array([ .1, .13, .15, .23, .25, .40, .44, .65, .76, .78, .81])
+        hgt = np.array([ 4,  -5,   3,   -4,  5,  -4.2, 2.1, 4.3,  -3.1, 2.1, -4.2])
+        y = np.zeros_like(t)
+        for p, h in zip(pos, hgt):
+            y += (1 + np.abs(t - p))*h/2
+            
+        x = np.vstack((x, y))
+
+    if SigName in ('Doppler', 'AllSig'):
+        y = np.sqrt(t * (1-t)) * np.sin((2*np.pi*1.05) / (t+.05))
+                
+        x = np.vstack((x, y))
+
+    if SigName in ('Ramp', 'AllSig'):
+        y = t.copy()
+        y[t >= .37] -= 1
+                
+        x = np.vstack((x, y))
+    
+    if SigName in ('Cusp', 'AllSig'):
+        y = np.sqrt(np.abs(t - 0.37))
+                
+        x = np.vstack((x, y))
+
+    if SigName in ('Sing', 'AllSig'):
+        k = np.floor(N * .37)
+        y = 1 / np.abs(t - (k+.5)/N)
+                
+        x = np.vstack((x, y))
+
+"""
 if(strcmp(SigName,'HiSine') | strcmp(SigName,'AllSig')),
   y = sin( pi * (N * .6902) .* t);
 end;
