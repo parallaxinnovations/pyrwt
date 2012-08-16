@@ -289,17 +289,16 @@ def mrdwt(x, h, L=None):
 
     x, L, m, n, lh = _prepareInputs(x, h, L)
     
-    yl = np.zeros_like(x)
-    if min(m, n) == 1:
-        yh = np.zeros((m, L*n), dtype=DTYPEd)
-    else:
-        yh = np.zeros((m, 3*L*n), dtype=DTYPEd)
-
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = x.flatten()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = h.flatten()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_yl = yl.flatten()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_yh = yh.flatten()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = np.array(x, dtype=DTYPEd).flatten()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd).flatten()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_yl = np.zeros(x.size, dtype=DTYPEd)
+    cdef np.ndarray[DTYPEd_t, ndim=2]  np_yh
     
+    if min(m, n) == 1:
+        np_yh = np.zeros((m, L*n), dtype=DTYPEd)
+    else:
+        np_yh = np.zeros((m, 3*L*n), dtype=DTYPEd)
+
     MRDWT(
         <double *>np_x.data,
         m,
@@ -311,7 +310,10 @@ def mrdwt(x, h, L=None):
         <double *>np_yh.data
         );
     
-    return yl, yh, L
+    yl = np_yl.copy()
+    yl.shape = x.shape
+    
+    return yl, np_yh, L
     
 
 def mirdwt(yl, yh, h, L=None):
@@ -397,12 +399,10 @@ def mirdwt(yl, yh, h, L=None):
     else:
         assert(m == mh and nh == n*L, "Dimensions of first two input vectors not consistent!")
 
-    x = np.zeros_like(yl)
-    
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = x.flatten()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = h.flatten()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_yl = yl.flatten()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_yh = yh.flatten()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = np.zeros(yl.size, dtype=DTYPEd)
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd).flatten()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_yl = np.array(yl, dtype=DTYPEd).flatten()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_yh = np.array(yh, dtype=DTYPEd).flatten()
     
     MIRDWT(
         <double *>np_x.data,
@@ -414,5 +414,8 @@ def mirdwt(yl, yh, h, L=None):
         <double *>np_yl.data,
         <double *>np_yh.data
         );
+    
+    x = np_x.copy()
+    x.shape = yl.shape
     
     return x, L

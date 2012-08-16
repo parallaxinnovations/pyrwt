@@ -152,7 +152,7 @@ def denoise(
             if x.ndim == 1:
                 xd[ix] = ykeep
             else:
-                x[ix, jx] = ykeep
+                xd[ix, jx] = ykeep
 
         xd, L = midwt(xd, h, L)
     else:
