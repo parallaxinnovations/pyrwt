@@ -142,11 +142,9 @@ def mdwt(x, h, L=None):
     
     x, L, m, n, lh = _prepareInputs(x, h, L)
 
-    y = np.zeros_like(x)
-    
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = x.flatten()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = h.flatten()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_y = y.flatten()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = np.array(x, dtype=DTYPEd).flatten()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd).flatten()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_y = np.zeros(x.size, dtype=DTYPEd)
     
     MDWT(
         <double *>np_x.data,
@@ -157,6 +155,9 @@ def mdwt(x, h, L=None):
         L,
         <double *>np_y.data
         );
+    
+    y = np_y.copy()
+    y.shape = x.shape
     
     return y, L
 
@@ -197,11 +198,9 @@ def midwt(y, h, L=None):
     
     y, L, m, n, lh = _prepareInputs(y, h, L)
     
-    x = np.zeros_like(y)
-    
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = x.flatten()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = h.flatten()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_y = y.flatten()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = np.zeros(y.size, dtype=DTYPEd)
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd).flatten()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_y = np.array(y, dtype=DTYPEd).flatten()
     
     MIDWT(
         <double *>np_x.data,
@@ -212,6 +211,9 @@ def midwt(y, h, L=None):
         L,
         <double *>np_y.data
         );
+    
+    x = np_x.copy()
+    x.shape = y.shape
     
     return x, L
 
