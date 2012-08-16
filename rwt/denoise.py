@@ -1,8 +1,20 @@
 from __future__ import division
 import numpy as np
+from rwt import mdwt, midwt, mrdwt, mirdwt
+from rwt.utilities import softThreshold, hardThreshold
 
 
-def denoise(x, h, wavelet_type=0, option=[]):
+def denoise(
+    x,
+    h,
+    wavelet_type=0,
+    low_pass=False,
+    c=None,
+    var_estimator=0,
+    threshold_type=None,
+    L=0,
+    threshold=0
+    ):
     """
     DENOISE is a generic program for wavelet based denoising.
     The program will denoise the signal x using the 2-band wavelet
@@ -50,11 +62,11 @@ def denoise(x, h, wavelet_type=0, option=[]):
                 the input option vector with one added element
                 option(7) = type.
 
-  HERE'S AN EASY WAY TO RUN THE EXAMPLES:
-  Cut-and-paste the example you want to run to a new file 
-  called ex.m, for example. Delete out the  at the beginning 
-  of each line in ex.m (Can use search-and-replace in your editor
-  to replace it with a space). Type 'ex' in matlab and hit return.
+    HERE'S AN EASY WAY TO RUN THE EXAMPLES:
+    Cut-and-paste the example you want to run to a new file 
+    called ex.m, for example. Delete out the  at the beginning 
+    of each line in ex.m (Can use search-and-replace in your editor
+    to replace it with a space). Type 'ex' in matlab and hit return.
 
     Example 1: 
        h = daubcqf(6); [s,N] = makesig('Doppler'); n = randn(1,N);
@@ -69,7 +81,7 @@ def denoise(x, h, wavelet_type=0, option=[]):
        [yd,yn,opt2] = denoise(x,h,1);
        figure;plot(yd);hold on;plot(s,'r');
 
- Example 2: (on an image)  
+    Example 2: (on an image)  
       h = daubcqf(6);  load lena; 
       noisyLena = lena + 25 * randn(size(lena));
       figure; colormap(gray); imagesc(lena); title('Original Image');
@@ -77,123 +89,131 @@ def denoise(x, h, wavelet_type=0, option=[]):
        Denoise lena with the default method based on the DWT
       [denoisedLena,xn,opt1] = denoise(noisyLena,h);
       figure; colormap(gray); imagesc(denoisedLena); title('denoised Image');
-       
+
 
     See also: mdwt, midwt, mrdwt, mirdwt, SoftTh, HardTh, setopt
 
     """
-    
-    """
-if(nargin < 2)
-  error('You need to provide at least 2 inputs: x and h');
-end;
-if(nargin < 3),
-  type = 0;
-  option = [];
-elseif(nargin < 4)
-  option = [];
-end;
-if(isempty(type)),
-  type = 0;
-end;
-if(type == 0),
-  default_opt = [0 3.0 0 0 0 0];
-elseif(type == 1),
-  default_opt = [0 3.6 0 1 0 0];
-else,
-  error(['Unknown denoising method',10,...
-	  'If it is any good we need to have a serious talk :-)']);
-end;
-option = setopt(option,default_opt);
-[mx,nx] = size(x);
-dim = min(mx,nx);
-if(dim == 1),
-  n = max(mx,nx);
-else,
-  n = dim;
-end;
-if(option(5) == 0),
-  L = floor(log2(n));
-else
-  L = option(5);
-end;
-if(type == 0), 			% Denoising by DWT
-  xd = mdwt(x,h,L);
-  if (option(6) == 0),
-    tmp = xd(floor(mx/2)+1:mx,floor(nx/2)+1:nx);
-    if(option(3) == 0),
-      thld = option(2)*median(abs(tmp(:)))/.67;
-    elseif(option(3) == 1),
-      thld = option(2)*std(tmp(:));
-    else
-      error('Unknown threshold estimator, Use either MAD or STD');
-    end;
-  else,
-    thld = option(6);
-  end;
-  if(dim == 1)
-    ix = 1:n/(2^L);
-    ykeep = xd(ix);
-  else
-    ix = 1:mx/(2^L);
-    jx = 1:nx/(2^L);
-    ykeep = xd(ix,jx);
-  end;
-  if(option(4) == 0),
-    xd = SoftTh(xd,thld);
-  elseif(option(4) == 1),
-    xd = HardTh(xd,thld);
-  else,
-    error('Unknown threshold rule. Use either Soft (0) or Hard (1)');
-  end;
-  if (option(1) == 0),
-    if(dim == 1),
-      xd(ix) = ykeep;
-    else,
-      xd(ix,jx) = ykeep;
-    end;
-  end;
-  xd = midwt(xd,h,L);
-elseif(type == 1), 			% Denoising by UDWT
-  [xl,xh] = mrdwt(x,h,L);
-  if(dim == 1),
-    c_offset = 1;
-  else,
-    c_offset = 2*nx + 1;
-  end;
-  if (option(6) == 0),
-    tmp = xh(:,c_offset:c_offset+nx-1);
-    if(option(3) == 0),
-      thld = option(2)*median(abs(tmp(:)))/.67;
-    elseif(option(3) == 1),
-      thld = option(2)*std(tmp(:));
-    else
-      error('Unknown threshold estimator, Use either MAD or STD');
-    end;
-  else,
-    thld = option(6);
-  end;
-  if(option(4) == 0),
-    xh = SoftTh(xh,thld);
-    if(option(1) == 1),
-      xl = SoftTh(xl,thld);
-    end;
-  elseif(option(4) == 1),
-    xh = HardTh(xh,thld);
-    if(option(1) == 1),
-      xl = HardTh(xl,thld);
-    end;
-  else,
-    error('Unknown threshold rule. Use either Soft (0) or Hard (1)');
-  end;
-  xd = mirdwt(xl,xh,h,L);
-else, 					% Denoising by unknown method
-  error(['Unknown denoising method',10,...
-         'If it is any good we need to have a serious talk :-)']);
-end;
-option(6) = thld;
-option(7) = type;
-xn = x - xd; 
-    """
 
-    return (xd, xn, option)
+    assert wavelet_type in (0, 1), "Unknown denoising method. If it is any good we need to have a serious talk :-)"
+
+    if c == None:
+        if type == 0:
+            c = 3.0
+        else:
+            c = 3.6
+
+    if threshold_type == None:
+        if type == 0:
+            threshold_type = 0
+        else:
+            threshold_type = 1
+
+    assert threshold_type in (0, 1), 'Unknown threshold rule. Use either Soft (0) or Hard (1)'
+
+    if x.ndim == 1:
+        n = nx = x.size
+        mx = 1
+    else:
+        mx, nx = x.shape
+        n = min(mx, nx)
+
+    if L == 0:
+        L = np.floor(np.log2(n))
+
+    if wavelet_type == 0:
+        #
+        # Denoising by DWT
+        #
+        xd, L = mdwt(x, h, L)
+        if threshold == 0:
+            assert var_estimator in (0, 1), 'Unknown threshold estimator, Use either MAD (0) or STD (1)'
+
+            tmp = xd[int(mx/2):mx, int(nx/2):nx]
+            if var_estimator == 0:
+                threshold = c * np.median(np.abs(tmp))/.67
+            else:
+                threshold = c * np.std(tmp)
+
+        if x.ndim == 1:
+            ix = np.arange(int(n/(2**L)))
+            ykeep = xd[ix]
+        else:
+            ix = np.arange(int(mx/(2**L)))
+            jx = np.arange(int(nx/(2**L)))
+            ykeep = xd[ix, jx]
+
+        if threshold_type == 0:
+            xd = softThreshold(xd, threshold)
+        else:
+            xd = hardThreshold(xd, threshold)
+
+        if not low_pass:
+            if x.ndim == 1:
+                xd[ix] = ykeep
+            else:
+                x[ix, jx] = ykeep
+
+        xd, L = midwt(xd, h, L)
+    else:
+        #
+        # Denoising by UDWT
+        #
+        xl, xh, L = mrdwt(x, h, L)
+        
+        if x.ndim == 1:
+            c_offset = 1
+        else:
+            c_offset = 2*nx + 1
+
+        if threshold == 0:
+            assert var_estimator in (0, 1), 'Unknown threshold estimator, Use either MAD (0) or STD (1)'
+
+            tmp = xh[:, c_offset:c_offset+nx-1]
+            if var_estimator == 0:
+                threshold = c * np.median(np.abs(tmp))/.67
+            else:
+                threshold = c * np.std(tmp)
+
+        if threshold_type == 0:
+            xh = softThreshold(xh, threshold)
+            
+            if low_pass:
+                xl = softThreshold(xl, threshold)
+        else:
+            xh = hardThreshold(xh, threshold)
+
+            if low_pass:
+                xl = hardThreshold(xl, threshold)
+        
+        xd, L = mirdwt(xl, xh, h, L)
+
+    xn = x - xd
+
+    return xd, xn
+
+
+if __name__ == '__main__':
+    
+    import matplotlib.pyplot as plt
+    import scipy.misc as spm
+    from rwt import daubcqf
+    
+    lena = spm.lena()
+    noisy_lena = lena + 25 * np.random.randn(*lena.shape)
+    
+    h = daubcqf(6)[0]
+    denoised_lena, xn = denoise(noisy_lena, h)
+    
+    plt.figure()
+    plt.gray()
+    plt.subplot(131)
+    plt.imshow(lena)
+    plt.title('Original Image')
+    plt.subplot(132)
+    plt.imshow(noisy_lena)
+    plt.title('Noisy Image')
+    plt.subplot(133)
+    plt.imshow(denoised_lena)
+    plt.title('Denoised Image')
+    plt.show()

@@ -31,7 +31,8 @@ def hardThreshold(y, thld):
     """
     
     x = np.zeros_like(y)
-    x[np.abs(y) > thld] = y
+    ind = np.abs(y) > thld
+    x[ind] = y[ind]
     
     return x
 
@@ -159,59 +160,57 @@ def makesig(SigName='AllSig', N=512):
                 
         x = np.vstack((x, y))
 
-"""
-if(strcmp(SigName,'HiSine') | strcmp(SigName,'AllSig')),
-  y = sin( pi * (N * .6902) .* t);
-end;
-x = [x;y];
-y = [];
-if(strcmp(SigName,'LoSine') | strcmp(SigName,'AllSig')),
-  y = sin( pi * (N * .3333) .* t);
-end;
-x = [x;y];
-y = [];
-if(strcmp(SigName,'LinChirp') | strcmp(SigName,'AllSig')),
-  y = sin(pi .* t .* ((N .* .125) .* t));
-end;
-x = [x;y];
-y = [];
-if(strcmp(SigName,'TwoChirp') | strcmp(SigName,'AllSig')),
-  y = sin(pi .* t .* (N .* t)) + sin((pi/3) .* t .* (N .* t));
-end;
-x = [x;y];
-y = [];
-if(strcmp(SigName,'QuadChirp') | strcmp(SigName,'AllSig')),
-  y = sin( (pi/3) .* t .* (N .* t.^2));
-end;
-x = [x;y];
-y = [];
-if(strcmp(SigName,'MishMash') | strcmp(SigName,'AllSig')),  
-  % QuadChirp + LinChirp + HiSine
-  y = sin( (pi/3) .* t .* (N .* t.^2)) ;
-  y = y +  sin( pi * (N * .6902) .* t);
-  y = y +  sin(pi .* t .* (N .* .125 .* t));
-end;
-x = [x;y];
-y = [];
-if(strcmp(SigName,'WernerSorrows') | strcmp(SigName,'AllSig')),
-  y = sin( pi .* t .* (N/2 .* t.^2)) ;
-  y = y +  sin( pi * (N * .6902) .* t);
-  y = y +  sin(pi .* t .* (N .* t));
-  pos = [ .1 .13 .15 .23 .25 .40 .44 .65  .76 .78 .81];
-  hgt = [ 4  5   3   4  5  4.2 2.1 4.3  3.1 5.1 4.2];
-  wth = [.005 .005 .006 .01 .01 .03 .01 .01  .005 .008 .005];
-  for j =1:length(pos)
-    y = y + hgt(j)./( 1 + abs((t - pos(j))./wth(j))).^4;
-  end 
-end;
-x = [x;y];
-y = [];
-if(strcmp(SigName,'Leopold') | strcmp(SigName,'AllSig')),
-  y = (t == floor(.37 * N)/N); 		% Kronecker
-end;
-x = [x;y];
-y = [];
 
-    """
+#if(strcmp(SigName,'HiSine') | strcmp(SigName,'AllSig')),
+  #y = sin( pi * (N * .6902) .* t);
+#end;
+#x = [x;y];
+#y = [];
+#if(strcmp(SigName,'LoSine') | strcmp(SigName,'AllSig')),
+  #y = sin( pi * (N * .3333) .* t);
+#end;
+#x = [x;y];
+#y = [];
+#if(strcmp(SigName,'LinChirp') | strcmp(SigName,'AllSig')),
+  #y = sin(pi .* t .* ((N .* .125) .* t));
+#end;
+#x = [x;y];
+#y = [];
+#if(strcmp(SigName,'TwoChirp') | strcmp(SigName,'AllSig')),
+  #y = sin(pi .* t .* (N .* t)) + sin((pi/3) .* t .* (N .* t));
+#end;
+#x = [x;y];
+#y = [];
+#if(strcmp(SigName,'QuadChirp') | strcmp(SigName,'AllSig')),
+  #y = sin( (pi/3) .* t .* (N .* t.^2));
+#end;
+#x = [x;y];
+#y = [];
+#if(strcmp(SigName,'MishMash') | strcmp(SigName,'AllSig')),  
+  #% QuadChirp + LinChirp + HiSine
+  #y = sin( (pi/3) .* t .* (N .* t.^2)) ;
+  #y = y +  sin( pi * (N * .6902) .* t);
+  #y = y +  sin(pi .* t .* (N .* .125 .* t));
+#end;
+#x = [x;y];
+#y = [];
+#if(strcmp(SigName,'WernerSorrows') | strcmp(SigName,'AllSig')),
+  #y = sin( pi .* t .* (N/2 .* t.^2)) ;
+  #y = y +  sin( pi * (N * .6902) .* t);
+  #y = y +  sin(pi .* t .* (N .* t));
+  #pos = [ .1 .13 .15 .23 .25 .40 .44 .65  .76 .78 .81];
+  #hgt = [ 4  5   3   4  5  4.2 2.1 4.3  3.1 5.1 4.2];
+  #wth = [.005 .005 .006 .01 .01 .03 .01 .01  .005 .008 .005];
+  #for j =1:length(pos)
+    #y = y + hgt(j)./( 1 + abs((t - pos(j))./wth(j))).^4;
+  #end 
+#end;
+#x = [x;y];
+#y = [];
+#if(strcmp(SigName,'Leopold') | strcmp(SigName,'AllSig')),
+  #y = (t == floor(.37 * N)/N); 		% Kronecker
+#end;
+#x = [x;y];
+#y = [];
 
     return (x, N)
