@@ -72,6 +72,8 @@ def softThreshold(y, thld):
     x[x<0] = 0
     x[y<0] = -x[y<0]
 
+    return x
+
 
 def makesig(SigName='AllSig', N=512):
     """
