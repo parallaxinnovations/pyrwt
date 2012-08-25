@@ -33,7 +33,7 @@ def daubcqf(N, TYPE='min'):
         "Orthonormal Bases of Compactly Supported Wavelets", CPAM, Oct.89 
     """
 
-    assert N%2==0, 'No Daubechies filter exists for ODD length'
+    assert N%2==0, 'No Daubechies filter exists for odd length'
 
     K = int(N/2)
     a = 1

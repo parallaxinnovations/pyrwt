@@ -79,7 +79,7 @@ MATLAB description:
 
 
 /*#define mat(a, i, j) (a[m*(j)+i]) */
-#define mat(a, i, j) (*(a + (m*(j)+i))) 
+#define mat(a, i, j) (*(a + (n*(i)+j)))  /* macro for matrix indices */
 #define max(a, b) ((a) > (b) ? (a) : (b))
 
 #ifdef __STDC__
