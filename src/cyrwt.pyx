@@ -9,14 +9,14 @@ ctypedef np.double_t DTYPEd_t
 
 def _prepareInputs(src_array, h, L):
 
-    src_array = np.array(src_array, dtype=DTYPEd)
+    src_array = np.array(src_array, dtype=DTYPEd, copy=False, order='C')
     if src_array.ndim > 1:
         m, n = src_array.shape
     else:
         m = 1
         n = src_array.size
 
-    h = np.array(h, dtype=DTYPEd)
+    h = np.array(h, dtype=DTYPEd, copy=False, order='C')
     if h.ndim > 1:
         h_row, h_col = h.shape
     else:
@@ -153,8 +153,8 @@ def mdwt(x, h, L=None):
     
     x, L, m, n, lh = _prepareInputs(x, h, L)
 
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = np.array(x, dtype=DTYPEd).flatten()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd).flatten()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = np.array(x, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd, copy=False, order='C').ravel()
     cdef np.ndarray[DTYPEd_t, ndim=1]  np_y = np.zeros(x.size, dtype=DTYPEd)
     
     MDWT(
@@ -220,8 +220,8 @@ def midwt(y, h, L=None):
     y, L, m, n, lh = _prepareInputs(y, h, L)
     
     cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = np.zeros(y.size, dtype=DTYPEd)
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd).flatten()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_y = np.array(y, dtype=DTYPEd).flatten()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_y = np.array(y, dtype=DTYPEd, copy=False, order='C').ravel()
     
     MIDWT(
         <double *>np_x.data,
@@ -282,8 +282,8 @@ def mrdwt(x, h, L=None):
 
     x, L, m, n, lh = _prepareInputs(x, h, L)
     
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = np.array(x, dtype=DTYPEd).flatten()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd).flatten()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = np.array(x, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd, copy=False, order='C').ravel()
     cdef np.ndarray[DTYPEd_t, ndim=1]  np_yl = np.zeros(x.size, dtype=DTYPEd)
     cdef np.ndarray[DTYPEd_t, ndim=2]  np_yh
     
@@ -353,7 +353,7 @@ def mirdwt(yl, yh, h, L=None):
 
     yl, L, m, n, lh = _prepareInputs(yl, h, L)
     
-    yh = np.array(yh)
+    yh = np.array(yh, copy=False, order='C')
     mh, nh = yh.shape
     
     #
@@ -365,9 +365,9 @@ def mirdwt(yl, yh, h, L=None):
         assert(m == mh and nh == n*L, "Dimensions of first two input vectors not consistent!")
 
     cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = np.zeros(yl.size, dtype=DTYPEd)
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd).flatten()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_yl = np.array(yl, dtype=DTYPEd).flatten()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_yh = np.array(yh, dtype=DTYPEd).flatten()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_yl = np.array(yl, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_yh = np.array(yh, dtype=DTYPEd, copy=False, order='C').ravel()
     
     MIRDWT(
         <double *>np_x.data,

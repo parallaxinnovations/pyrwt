@@ -199,7 +199,7 @@ if __name__ == '__main__':
     import scipy.misc as spm
     from rwt import daubcqf
     
-    lena = spm.lena()
+    lena = spm.lena()[:256, :]
     noisy_lena = lena + 25 * np.random.randn(*lena.shape)
     
     h = daubcqf(6)[0]
