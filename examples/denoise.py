@@ -197,7 +197,7 @@ if __name__ == '__main__':
     
     import matplotlib.pyplot as plt
     import scipy.misc as spm
-    from rwt import daubcqf
+    from rwt.wavelets import daubcqf
     
     lena = spm.lena()[:256, :]
     noisy_lena = lena + 25 * np.random.randn(*lena.shape)

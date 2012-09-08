@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-cyipot: Python wrapper for the Ipopt optimization package, written in Cython.
+pyrwt: A cython wrapper for the IRice Wavelet Toolbox, written in Cython.
 
 Copyright (C) 2012 Amit Aides
 Author: Amit Aides <amitibo@tx.technion.ac.il>
-URL: <http://http://code.google.com/p/cyipopt/>
+URL: <http://>
 License: EPL 1.0
 """
 from setuptools import setup
@@ -18,10 +18,10 @@ import sys
 
 PACKAGE_NAME = 'rwt'
 VERSION = '0.1'
-DESCRIPTION = 'A Cython wrapper to the IPOPT optimization package'
+DESCRIPTION = 'A cython wrapper for the IRice Wavelet Toolbox'
 AUTHOR = 'Amit Aides'
 EMAIL = 'amitibo@tx.technion.ac.il'
-URL = "http://code.google.com/p/cyipopt/"
+URL = "http://"
 
 IPOPT_ICLUDE_DIRS=[]
 IPOPT_ICLUDE_DIRS += [np.get_include()]
