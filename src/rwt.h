@@ -34,3 +34,28 @@ void MIRDWT(double *x, int m, int n, double *h, int lh, int L,
 
 void bpconv(double *x_out, int lx, double *g0, double *g1, int lh,
        double *x_inl, double *x_inh);
+
+
+//
+// wt declarations
+//
+void WT(
+    double *x,
+    int n,
+    int prod_h,
+    int stride,
+    double *h,
+    int lh,
+    int L,
+    double *y
+    );
+
+void wtconv(
+    double *x_in,
+    int lx, 
+    double *h0,
+    double *h1,
+    int lhm1, 
+    double *x_outl,
+    double *x_outh
+    );

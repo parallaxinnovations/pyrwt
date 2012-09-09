@@ -384,3 +384,140 @@ def mirdwt(yl, yh, h, L=None):
     x.shape = yl.shape
     
     return x, L
+    
+    
+def _prepareInputs2(src_array, h, L, axis):
+
+    src_array = np.array(src_array, dtype=DTYPEd, copy=False, order='C')
+    
+    assert(axis >= 0 and axis <= src_array.ndim, "Wrong axis value")
+    
+    shape = src_array.shape
+    prod_h = int(np.prod(shape[:axis]))
+    stride = int(np.prod(shape[axis+1:]))
+    n = shape[axis]
+    
+    h = np.array(h, dtype=DTYPEd, copy=False, order='C').ravel()
+    lh = h.size
+        
+    if L == None:
+        #
+        # Estimate L
+        #
+        i = n
+        L = 0
+        while i % 2 == 0:
+            i >>= 1
+            L += 1
+
+    assert(L != 0, "Maximum number of levels is zero; no decomposition can be performed!")
+    assert(L > 0, "The number of levels, L, must be a non-negative integer")
+
+    return src_array, L, n, stride, prod_h, lh
+
+
+def wt(x, h, axis=0, L=None):
+    """	
+    Computes the discrete wavelet transform y for a 1D or 2D input
+    signal x using the scaling filter h.
+
+    Parameters
+    ----------
+    x : array-like, shape = [n] or [m, n]
+        Finite length 1D or 2D signal (implicitly periodized)
+    h : array-like, shape = [n]
+        Scaling filter
+    L : integer, optional (default=None)
+        Number of levels. In the case of a 1D signal, length(x) must be
+        divisible by 2^L; in the case of a 2D signal, the row and the
+        column dimension must be divisible by 2^L. If no argument is
+        specified, a full DWT is returned for maximal possible L.
+
+    Returns
+    -------
+    y : array-like, shape = [n] or [m, n]
+        The wavelet transform of the signal 
+        (see example to understand the coefficients)
+    L : integer
+	number of decomposition levels
+
+    Examples
+    --------
+    1D Example:
+    
+       x = makesig('LinChirp', 8)
+       h = daubcqf(4, 'min')[0]
+       L = 2
+       y, L = mdwt(x, h, L)
+
+    1D Example's output and explanation:
+
+       y = [1.1097, 0.8767, 0.8204, -0.5201, -0.0339, 0.1001, 0.2201, -0.1401]
+       L = 2
+
+    The coefficients in output y are arranged as follows
+
+       y(1) and y(2) : Scaling coefficients (lowest frequency)
+       y(3) and y(4) : Band pass wavelet coefficients
+       y(5) to y(8)  : Finest scale wavelet coefficients (highest frequency)
+
+    2D Example:
+
+       h = daubcqf(4, 'min')
+       L = 1
+       y, L = mdwt(test_image, h, L)
+
+    2D Example's output and explanation:
+
+       The coefficients in y are arranged as follows.
+
+              .------------------.
+              |         |        |
+              |    4    |   2    |
+              |         |        |
+              |   L,L   |   H,L  |
+              |         |        |
+              --------------------
+              |         |        |
+              |    3    |   1    |
+              |         |        |
+              |   L,H   |  H,H   |
+              |         |        |
+              `------------------'
+       
+       where 
+            1 : High pass vertically and high pass horizontally
+            2 : Low pass vertically and high pass horizontally
+            3 : High pass vertically and low  pass horizontally
+            4 : Low pass vertically and Low pass horizontally 
+                (scaling coefficients)
+
+    See also
+    --------
+    midwt, mrdwt, mirdwt
+
+    """
+    
+    
+    x, L, n, stride, prod_h, lh = _prepareInputs2(x, h, L, axis)
+    
+    y = np.empty(x.shape, dtype=DTYPEd, order='C')
+    
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = np.array(x, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_y = y.ravel()
+    
+    WT(
+        <double *>np_x.data,
+        n,
+	prod_h,
+	stride,
+        <double *>np_h.data,
+        lh,
+        L,
+        <double *>np_y.data
+        );
+    
+    return y, L
+
+

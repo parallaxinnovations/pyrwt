@@ -42,3 +42,13 @@ cdef extern from "rwt.h":
         double *yh
         )
 
+    void WT(
+        double *x,
+        int n,
+        int prod_h,
+        int stride,
+        double *h,
+        int lh,
+        int L,
+        double *y
+        )
