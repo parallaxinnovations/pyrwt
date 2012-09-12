@@ -1,6 +1,6 @@
 from __future__ import division
 import numpy as np
-from rwt import mdwt, wt
+from rwt import dwt, dwtaxis, idwtaxis
 from rwt.utilities import softThreshold, hardThreshold
 
 
@@ -13,9 +13,9 @@ def main1():
    
     h = daubcqf(0)[0]
 
-    trans_lena1 = wt(lena, h, axis=0)[0]
-    trans_lena1 = wt(trans_lena1, h, axis=1)[0]
-    trans_lena2 = mdwt(spm.lena(), h)[0]
+    trans_lena1 = dwtaxis(lena, h, axis=0)[0]
+    trans_lena1 = dwtaxis(trans_lena1, h, axis=1)[0]
+    trans_lena2 = dwt(spm.lena(), h)[0]
     
     trans_lena1 -= trans_lena1.min() - 1
     trans_lena2 -= trans_lena2.min() - 1
@@ -57,12 +57,47 @@ def main2():
     print x[:, 0]
     print xT[0, :]
     
-    print wt(x, h, axis=0)[0]
-    print wt(xT, h, axis=1)[0]
+    print dwtaxis(x, h, axis=0)[0]
+    print dwtaxis(xT, h, axis=1)[0]
     
-    print mdwt(x[:, 0], h)[0]
-    print mdwt(xT[0, :], h)[0]
+    print dwt(x[:, 0], h)[0]
+    print dwt(xT[0, :], h)[0]
     
     
+def main3():
+    import matplotlib.pyplot as plt
+    import scipy.misc as spm
+    from rwt.wavelets import daubcqf
+    
+    lena = spm.lena()
+   
+    h = daubcqf(0)[0]
+
+    trans_lena0 = dwtaxis(lena, h, axis=0)[0]
+    trans_lena0_back = idwtaxis(trans_lena0, h, axis=0)[0]
+    
+    trans_lena1 = dwtaxis(lena, h, axis=1)[0]
+    trans_lena1_back = idwtaxis(trans_lena1, h, axis=1)[0]
+    
+    plt.figure()
+    plt.gray()
+    plt.subplot(231)
+    plt.imshow(lena)
+    plt.title('Original Image')
+    plt.subplot(232)
+    plt.imshow(trans_lena0.astype(np.uint8))
+    plt.title('Along axis 0')
+    plt.subplot(233)
+    plt.imshow(trans_lena1.astype(np.uint8))
+    plt.title('Along axis 1')
+    plt.subplot(235)
+    plt.imshow(trans_lena0_back.astype(np.uint8))
+    plt.title('Along axis 0')
+    plt.subplot(236)
+    plt.imshow(trans_lena1_back.astype(np.uint8))
+    plt.title('Along axis 1')
+    plt.show()
+
+
 if __name__ == '__main__':
-    main1()
+    main3()

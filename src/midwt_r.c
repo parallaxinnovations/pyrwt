@@ -170,33 +170,50 @@ int m, n, lh, L;
   free((void *)g1);
 }
 
-#ifdef __STDC__
-void bpsconv(double *x_out, int lx, double *g0, double *g1, int lhm1, 
-	int lhhm1, double *x_inl, double *x_inh)
-#else
-bpsconv(x_out, lx, g0, g1, lhm1, lhhm1, x_inl, x_inh)
-double *x_inl, *x_inh, *g0, *g1, *x_out;
-int lx, lhm1, lhhm1;
-#endif
-{
-  int i, j, ind, tj;
-  double x0, x1;
 
-  for (i=lhhm1-1; i > -1; i--){
-    x_inl[i] = x_inl[lx+i];
-    x_inh[i] = x_inh[lx+i];
-  }
-  ind = 0;
-  for (i=0; i<(lx); i++){
-    x0 = 0;
-    x1 = 0;
-    tj = -2;
-    for (j=0; j<=lhhm1; j++){
-      tj+=2;
-      x0 = x0 + x_inl[i+j]*g0[lhm1-1-tj] + x_inh[i+j]*g1[lhm1-1-tj] ;
-      x1 = x1 + x_inl[i+j]*g0[lhm1-tj] + x_inh[i+j]*g1[lhm1-tj] ;
+void bpsconv(
+    double *x_out,
+    int lx,
+    double *g0,
+    double *g1,
+    int lhm1, 
+    int lhhm1,
+    double *x_inl,
+    double *x_inh
+    )
+{
+    int i;
+    int j;
+    int ind;
+    int tj;
+    double x0;
+    double x1;
+
+    //
+    // Replicate x_inl/h below
+    //
+    for (i=lhhm1-1; i > -1; i--)
+    {
+        x_inl[i] = x_inl[lx+i];
+        x_inh[i] = x_inh[lx+i];
     }
-    x_out[ind++] = x0;
-    x_out[ind++] = x1;
-  }
+    
+    //
+    // Perform the convolution
+    //
+    ind = 0;
+    for (i=0; i<lx; i++)
+    {
+        x0 = 0;
+        x1 = 0;
+        tj = -2;
+        for (j=0; j<=lhhm1; j++)
+	{
+            tj += 2;
+            x0 = x0 + x_inl[i+j]*g0[lhm1-1-tj] + x_inh[i+j]*g1[lhm1-1-tj] ;
+            x1 = x1 + x_inl[i+j]*g0[lhm1-tj] + x_inh[i+j]*g1[lhm1-tj] ;
+	}
+        x_out[ind++] = x0;
+        x_out[ind++] = x1;
+    }
 }

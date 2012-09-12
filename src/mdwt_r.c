@@ -159,30 +159,41 @@ int m, n, lh, L;
   free((void *)h1);
 }
 
-#ifdef __STDC__
-void fpsconv(double *x_in, int lx, double *h0, double *h1, int lhm1, 
-	double *x_outl, double *x_outh)
-#else
-fpsconv(x_in, lx, h0, h1, lhm1, x_outl, x_outh)
-double *x_in, *h0, *h1, *x_outl, *x_outh;
-int lx, lhm1;
-#endif
 
+void fpsconv(
+    double *x_in,
+    int lx, 
+    double *h0,
+    double *h1,
+    int lhm1, 
+    double *x_outl,
+    double *x_outh
+    )
 {
-  int i, j, ind;
-  double x0, x1;
+    int i;
+    int j;
+    int ind;
+    double x0;
+    double x1;
 
-  for (i=lx; i < lx+lhm1; i++)
-    x_in[i] = *(x_in+(i-lx));
-  ind = 0;
-  for (i=0; i<(lx); i+=2){
-    x0 = 0;
-    x1 = 0;
-    for (j=0; j<=lhm1; j++){
-      x0 = x0 + x_in[i+j]*h0[lhm1-j];
-      x1 = x1 + x_in[i+j]*h1[lhm1-j];
+    //
+    // Replicate x_in on top.
+    //
+    for (i=lx; i < lx+lhm1; i++)
+        x_in[i] = *(x_in+(i-lx));
+
+    //
+    // Perform the convolution
+    //
+    ind = 0;
+    for (i=0; i<(lx); i+=2){
+        x0 = 0;
+        x1 = 0;
+        for (j=0; j<=lhm1; j++){
+            x0 += x_in[i+j]*h0[lhm1-j];
+            x1 += x_in[i+j]*h1[lhm1-j];
+        }
+        x_outl[ind] = x0;
+        x_outh[ind++] = x1;
     }
-    x_outl[ind] = x0;
-    x_outh[ind++] = x1;
-  }
 }

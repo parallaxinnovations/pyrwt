@@ -41,7 +41,7 @@ def main():
                 PACKAGE_NAME + '.' + 'cyrwt',
                 [
                     'src/cyrwt.pyx',
-                    'src/wt.c',
+                    'src/dwtaxis.c',
                     'src/mdwt_r.c',
                     'src/midwt_r.c',
                     'src/mrdwt_r.c',

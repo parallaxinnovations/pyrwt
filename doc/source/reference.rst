@@ -8,16 +8,22 @@ the :ref:`tutorial <tutorial>` for further details, as the class and
 function raw specifications may not be enough to give full guidelines on their
 uses.
 
-.. autofunction:: rwt.mdwt
+.. autofunction:: rwt.dwt
 
 
-.. autofunction:: rwt.midwt
+.. autofunction:: rwt.idwt
 
 
-.. autofunction:: rwt.mrdwt
+.. autofunction:: rwt.rdwt
 
 
-.. autofunction:: rwt.mirdwt
+.. autofunction:: rwt.irdwt
+
+
+.. autofunction:: rwt.dwtaxis
+
+
+.. autofunction:: rwt.idwtaxis
 
 
 .. automodule:: rwt.wavelets
