@@ -1,3 +1,12 @@
+"""
+wavelets - A wavelet libray.
+============================
+
+A library of functions that create different kinds of wavelets.
+
+.. codeauthor:: Amit Aides <amitibo@tx.technion.ac.il>
+"""
+
 from __future__ import division
 import numpy as np
 import scipy as sp
@@ -24,9 +33,10 @@ def daubcqf(N, TYPE='min'):
 
     Examples
     --------
-        h_0, h_1 = daubcqf(N=4, TYPE='min')
-        print h_0, h_1
-        [0.4830, 0.8365, 0.2241, -0.1294], [0.1294, 0.2241, -0.8365, 0.4830]
+    >>> from rwt.wavelets import daubcqf
+    >>> h_0, h_1 = daubcqf(N=4, TYPE='min')
+    >>> print h_0, h_1
+    [[0.4830, 0.8365, 0.2241, -0.1294]] [[0.1294, 0.2241, -0.8365, 0.4830]]
     """
 
     assert N%2==0, 'No Daubechies filter exists for odd length'

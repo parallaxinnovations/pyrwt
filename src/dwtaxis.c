@@ -173,8 +173,6 @@ void IDWTAXIS(
         base_ind = 0;
         r_o_a = actual_n/2;
     
-        printf("actual_L=%d, r_o_a=%d, actual_n=%d\n", actual_L, r_o_a, actual_n);
-        
         //
         // Loop on outer axes
         //

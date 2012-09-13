@@ -1,3 +1,10 @@
+"""
+rwt - Implementaion of wavelet transforms
+=========================================
+
+.. codeauthor:: Amit Aides <amitibo@tx.technion.ac.il>
+"""
+
 from __future__ import division
 import numpy as np
 cimport numpy as np
@@ -96,54 +103,16 @@ def dwt(x, h, L=None):
 
     Examples
     --------
-    1D Example:
-    
-       x = makesig('LinChirp', 8)
-       h = daubcqf(4, 'min')[0]
-       L = 2
-       y, L = mdwt(x, h, L)
-
-    1D Example's output and explanation:
-
-       y = [1.1097, 0.8767, 0.8204, -0.5201, -0.0339, 0.1001, 0.2201, -0.1401]
-       L = 2
-
-    The coefficients in output y are arranged as follows
-
-       y(1) and y(2) : Scaling coefficients (lowest frequency)
-       y(3) and y(4) : Band pass wavelet coefficients
-       y(5) to y(8)  : Finest scale wavelet coefficients (highest frequency)
-
     2D Example:
 
-       h = daubcqf(4, 'min')
-       L = 1
-       y, L = mdwt(test_image, h, L)
-
-    2D Example's output and explanation:
-
-       The coefficients in y are arranged as follows.
-
-              .------------------.
-              |         |        |
-              |    4    |   2    |
-              |         |        |
-              |   L,L   |   H,L  |
-              |         |        |
-              --------------------
-              |         |        |
-              |    3    |   1    |
-              |         |        |
-              |   L,H   |  H,H   |
-              |         |        |
-              `------------------'
-       
-       where 
-            1 : High pass vertically and high pass horizontally
-            2 : Low pass vertically and high pass horizontally
-            3 : High pass vertically and low  pass horizontally
-            4 : Low pass vertically and Low pass horizontally 
-                (scaling coefficients)
+    >>> from scipy.misc import lena
+    >>> from rwt import dwt, idwt
+    >>> from rwt.utilities import makeSignal
+    >>> from rwt.wavelets import daubcqf
+    >>> img = lena()
+    >>> h = daubcqf(4, 'min')[0]
+    >>> L = 1
+    >>> y, L = dwt(img, h, L)
 
     See Also
     --------
@@ -186,9 +155,9 @@ def idwt(y, h, L=None):
     h : array-like, shape = [n]
         Scaling filter
     L : integer, optional (default=None)
-        Number of levels. In the case of a 1D signal, length(x) must be
-        divisible by 2^L; in the case of a 2D signal, the row and the
-        column dimension must be divisible by 2^L. If no argument is
+        Number of levels. In the case of a 1D signal, len(x) must be
+        divisible by 2**L; in the case of a 2D signal, the row and the
+        column dimension must be divisible by 2**L. If no argument is
         specified, a full DWT is returned for maximal possible L.
 
     Returns
@@ -202,13 +171,18 @@ def idwt(y, h, L=None):
     --------
     1D Example:
     
-    >>> xin = makesig('LinChirp', 8)
+    >>> from rwt import dwt, idwt
+    >>> from rwt.utilities import makeSignal
+    >>> from rwt.wavelets import daubcqf
+    >>> xin = makeSignal('LinChirp', 8)
     >>> h = daubcqf(4, 'min')[0]
     >>> L = 1
     >>> y, L = dwt(xin, h, L)
-    >>> y
-    [0.0491, 0.1951, 0.4276, 0.7071, 0.9415, 0.9808, 0.6716, 0.0000]
+    >>> print y
+    [0.1912, 0.8821, 1.4257, 0.3101, -0.0339, 0.1001, 0.2201, 0.0000]
     >>> x, L = idwt(y, h, L)
+    >>> print x
+    [0.0491, 0.1951, 0.4276, 0.7071, 0.9415, 0.9808, 0.6716, 0.0000]
 
     See Also
     --------

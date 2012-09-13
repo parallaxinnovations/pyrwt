@@ -26,9 +26,15 @@ uses.
 .. autofunction:: rwt.idwtaxis
 
 
-.. automodule:: rwt.wavelets
+.. automodule:: rwt.utilities
 
 
-.. autofunction:: rwt.wavelets.daubcqf
+.. autofunction:: rwt.utilities.hardThreshold
+
+
+.. autofunction:: rwt.utilities.softThreshold
+
+
+.. autofunction:: rwt.utilities.makeSignal
 
 
