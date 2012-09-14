@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-pyrwt - A cython wrapper for the IRice Wavelet Toolbox
-======================================================
+pyrwt - A cython wrapper for the Rice Wavelet Toolbox
+=====================================================
 
 .. codeauthor:: Amit Aides <amitibo@tx.technion.ac.il>
 """

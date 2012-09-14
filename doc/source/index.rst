@@ -6,9 +6,6 @@
 Welcome to pyrwt's documentation!
 =================================
 
-mod:`rwt` Package
------------------------
-
 .. automodule:: rwt.__init__
     :members:
     :undoc-members:
