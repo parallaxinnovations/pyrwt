@@ -18,8 +18,8 @@ Contents:
 
    install
    tutorial
-   reference
    wavelets
+   reference
 
 
 Indices and tables
@@ -29,3 +29,11 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+
+Meta information
+================
+
+.. toctree::
+   :maxdepth: 2
+
+   license

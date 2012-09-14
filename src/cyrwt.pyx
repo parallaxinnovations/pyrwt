@@ -89,8 +89,8 @@ def dwt(x, h, L=None):
         Scaling filter
     L : integer, optional (default=None)
         Number of levels. In the case of a 1D signal, length(x) must be
-        divisible by 2^L; in the case of a 2D signal, the row and the
-        column dimension must be divisible by 2^L. If no argument is
+        divisible by 2**L; in the case of a 2D signal, the row and the
+        column dimension must be divisible by 2**L. If no argument is
         specified, a full DWT is returned for maximal possible L.
 
     Returns
@@ -403,8 +403,8 @@ def dwtaxis(x, h, axis=0, L=None):
         The axis of x for which to perform the transform.
     L : integer, optional (default=None)
         Number of levels. In the case of a 1D signal, length(x) must be
-        divisible by 2^L; in the case of a 2D signal, the row and the
-        column dimension must be divisible by 2^L. If no argument is
+        divisible by 2**L; in the case of a 2D signal, the row and the
+        column dimension must be divisible by 2**L. If no argument is
         specified, a full DWT is returned for maximal possible L.
 
     Returns
@@ -458,8 +458,8 @@ def idwtaxis(y, h, axis=0, L=None):
         The axis of x for which to perform the transform.
     L : integer, optional (default=None)
         Number of levels. In the case of a 1D signal, length(x) must be
-        divisible by 2^L; in the case of a 2D signal, the row and the
-        column dimension must be divisible by 2^L. If no argument is
+        divisible by 2**L; in the case of a 2D signal, the row and the
+        column dimension must be divisible by 2**L. If no argument is
         specified, a full DWT is returned for maximal possible L.
 
     Returns

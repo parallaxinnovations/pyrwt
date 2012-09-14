@@ -41,3 +41,10 @@ Contributing
 
 For bug reports use the Bitbucket issue tracker.
 You can also send wishes, comments, patches, etc. to amitibo@tx.technion.ac.il
+
+
+Acknowledgement
+===============
+
+Thank-you to the people at `http://Wingware.com`_ for their policy of *free licenses for non-commercial open source developers*.
+.. image:: https://wingware.com/store/free http://wingware.com/images/wingware-logo-180x58.png

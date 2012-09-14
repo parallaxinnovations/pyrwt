@@ -23,13 +23,13 @@ def hardThreshold(y, thld):
     Returns
     -------
     x : array-like, shape = Same dimension of y
-        Hard thresholded output x = (abs(y)>thld)*y
+        Hard thresholded output ``x = (abs(y)>thld)*y``
 
     Examples
     --------
     
-    >>> from rwt.utilities import makesig, hardThreshold
-    >>> y = makesig('WernerSorrows', 8)
+    >>> from rwt.utilities import makeSignal, hardThreshold
+    >>> y = makeSignal('WernerSorrows', 8)
     >>> print hardThreshold(y, thld=1)
     [1.5545, 5.3175, 0, 1.6956, -1.2678, 0, 1.7332, 0]
 
@@ -60,12 +60,12 @@ def softThreshold(y, thld):
     Returns
     -------
     x : array-like, shape = Same dimension as y
-        Soft thresholded output x = sign(y)(|y|-thld)_+
+        Soft thresholded output x = ``sign(y)(abs(y)-thld)_+``
 
     Examples
     --------
-    >>> from rwt.utilities import makesig, hardThreshold
-    >>> y = makesig('Doppler', 8)
+    >>> from rwt.utilities import makeSignal, hardThreshold
+    >>> y = makeSignal('Doppler', 8)
     >>> print softThreshold(y, thld=0.2)
     [0, 0, 0, -0.0703, 0, 0.2001, 0.0483, 0]
 

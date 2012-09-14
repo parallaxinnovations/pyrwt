@@ -4,8 +4,8 @@ pyrwt: A cython wrapper for the IRice Wavelet Toolbox, written in Cython.
 
 Copyright (C) 2012 Amit Aides
 Author: Amit Aides <amitibo@tx.technion.ac.il>
-URL: <http://>
-License: EPL 1.0
+URL: <http://bitbucket.org/amitibo/pyrwt>
+License: See attached license file
 """
 from setuptools import setup
 from setuptools.extension import Extension
@@ -18,10 +18,10 @@ import sys
 
 PACKAGE_NAME = 'rwt'
 VERSION = '0.1'
-DESCRIPTION = 'A cython wrapper for the IRice Wavelet Toolbox'
+DESCRIPTION = 'A cython wrapper for the Rice Wavelet Toolbox'
 AUTHOR = 'Amit Aides'
 EMAIL = 'amitibo@tx.technion.ac.il'
-URL = "http://"
+URL = "http://bitbucket.org/amitibo/pyrwt"
 
 IPOPT_ICLUDE_DIRS=[]
 IPOPT_ICLUDE_DIRS += [np.get_include()]
