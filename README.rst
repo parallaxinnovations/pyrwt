@@ -47,5 +47,3 @@ Acknowledgement
 ===============
 
 Thank-you to the people at <http://wingware.com/> for their policy of **free licenses for non-commercial open source developers**.
-
-.. image:: https://wingware.com/store/free http://wingware.com/images/wingware-logo-180x58.png
