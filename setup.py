@@ -16,24 +16,35 @@ import os.path
 import sys
 
 
+NAME = 'pyrwt'
 PACKAGE_NAME = 'rwt'
 VERSION = '0.1'
 DESCRIPTION = 'A cython wrapper for the Rice Wavelet Toolbox'
+LONG_DESCRIPTION = """
+pyrwt is a python package that uses cython to wrap the
+RICE Wavelet Toolbox. It is fast and enables comparing
+the results of your python algorithm with the results
+of algorithms that use the Matalb toolbox.
+"""
 AUTHOR = 'Amit Aides'
 EMAIL = 'amitibo@tx.technion.ac.il'
 URL = "http://bitbucket.org/amitibo/pyrwt"
-
+KEYWORDS = ["wavelets", "wavelet transform", "DWT"]
+LICENSE = 'GPLv3'
 IPOPT_ICLUDE_DIRS=[]
 IPOPT_ICLUDE_DIRS += [np.get_include()]
 
 def main():
     setup(
-        name=PACKAGE_NAME,
+        name=NAME,
         version=VERSION,
         description=DESCRIPTION,
+        long_description=LONG_DESCRIPTION,
         author=AUTHOR,
         author_email=EMAIL,
         url=URL,
+        keywords=KEYWORDS,
+        license=LICENSE,
         packages=[PACKAGE_NAME],
         cmdclass = {'build_ext': build_ext},
         ext_modules = [

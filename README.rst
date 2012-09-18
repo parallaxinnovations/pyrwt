@@ -2,6 +2,11 @@
 README for pyrwt
 ================
 
+pyrwt is a python package that uses cython to wrap the
+RICE Wavelet Toolbox. It is fast and enables comparing
+the results of your python algorithm with the results
+of algorithms that use the Matlab toolbox.
+
 Installing
 ==========
 
@@ -47,3 +52,5 @@ Acknowledgement
 ===============
 
 Thank-you to the people at <http://wingware.com/> for their policy of **free licenses for non-commercial open source developers**.
+
+.. image:: https://wingware.com/store/free http://wingware.com/images/wingware-logo-180x58.png
