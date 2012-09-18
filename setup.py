@@ -30,7 +30,12 @@ AUTHOR = 'Amit Aides'
 EMAIL = 'amitibo@tx.technion.ac.il'
 URL = "http://bitbucket.org/amitibo/pyrwt"
 KEYWORDS = ["wavelets", "wavelet transform", "DWT"]
-LICENSE = 'GPLv3'
+LICENSE = 'BSD'
+CLASSIFIERS = [
+    'License :: OSI Approved :: BSD License',
+    'Development Status :: 3 - Alpha',
+    'Topic :: Scientific/Engineering'
+]
 IPOPT_ICLUDE_DIRS=[]
 IPOPT_ICLUDE_DIRS += [np.get_include()]
 
@@ -44,6 +49,7 @@ def main():
         author_email=EMAIL,
         url=URL,
         keywords=KEYWORDS,
+        classifiers=CLASSIFIERS,
         license=LICENSE,
         packages=[PACKAGE_NAME],
         cmdclass = {'build_ext': build_ext},
