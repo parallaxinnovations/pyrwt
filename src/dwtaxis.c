@@ -10,14 +10,13 @@ void DWTAXIS(
     int n,
     int prod_h,
     int stride,
-    double *h,
+    double *h0,
+    double *h1,
     int lh,
     int L,
     double *y
     )
 {
-    double *h0;
-    double *h1;
     double *ydummyl;
     double *ydummyh;
     double *xdummy;
@@ -34,18 +33,6 @@ void DWTAXIS(
     xdummy = (double *)calloc(n+lh-1, sizeof(double));
     ydummyl = (double *)calloc(n, sizeof(double));
     ydummyh = (double *)calloc(n, sizeof(double));
-
-    //
-    // Low and high filters.
-    //
-    h0 = (double *)calloc(lh, sizeof(double));
-    h1 = (double *)calloc(lh, sizeof(double));
-    for (i=0; i<lh; i++){
-        h0[i] = h[lh-i-1];
-        h1[i] = h[i];
-    }   
-    for (i=0; i<lh; i+=2)
-        h1[i] = -h1[i];
 
     lhm1 = lh - 1;
     actual_n = 2*n;
@@ -104,8 +91,6 @@ void DWTAXIS(
     free((void *)xdummy);
     free((void *)ydummyl);
     free((void *)ydummyh);
-    free((void *)h0);
-    free((void *)h1);
 }
 
 
@@ -114,14 +99,13 @@ void IDWTAXIS(
     int n,
     int prod_h,
     int stride,
-    double *h,
+    double *g0,
+    double *g1,
     int lh,
     int L,
     double *y
     )
 {
-    double *g0;
-    double *g1;
     double *ydummyl;
     double *ydummyh;
     double *xdummy;
@@ -145,18 +129,6 @@ void IDWTAXIS(
     xdummy = (double *)calloc(n, sizeof(double));
     ydummyl = (double *)calloc(n+lhhm1, sizeof(double));
     ydummyh = (double *)calloc(n+lhhm1, sizeof(double));
-
-    //
-    // Low and high filters.
-    //
-    g0 = (double *)calloc(lh, sizeof(double));
-    g1 = (double *)calloc(lh, sizeof(double));
-    for (i=0; i<lh; i++){
-        g0[i] = h[i];
-        g1[i] = h[lh-i-1];
-    }
-    for (i=1; i<=lh; i+=2)
-        g1[i] = -g1[i];
 
     actual_n = n/(1<<(L-1));
 
@@ -217,6 +189,4 @@ void IDWTAXIS(
     free((void *)xdummy);
     free((void *)ydummyl);
     free((void *)ydummyh);
-    free((void *)g0);
-    free((void *)g1);
 }

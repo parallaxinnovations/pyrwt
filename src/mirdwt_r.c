@@ -82,16 +82,10 @@ MATLAB description:
 #define max(a, b) ((a) > (b) ? (a) : (b))
 #define mat(a, i, j) (*(a + (n*(i)+j)))  /* macro for matrix indices */
 
-#ifdef __STDC__
-void MIRDWT(double *x, int m, int n, double *h, int lh, int L,
+void MIRDWT(double *x, int m, int n, double *g0, double *g1, int lh, int L,
        double *yl, double *yh)
-#else
-MIRDWT(x, m, n, h, lh, L, yl, yh)
-double *x, *h, *yl, *yh;
-int m, n, lh, L;
-#endif
 {
-  double  *g0, *g1, *ydummyll, *ydummylh, *ydummyhl;
+  double *ydummyll, *ydummylh, *ydummyhl;
   double *ydummyhh, *xdummyl , *xdummyh, *xh;
   long i;
   int actual_L, actual_m, actual_n, c_o_a, ir, n_c, n_cb, lhm1;
@@ -103,21 +97,12 @@ int m, n, lh, L;
   ydummylh = (double *)calloc(max(m,n)+lh-1,sizeof(double));
   ydummyhl = (double *)calloc(max(m,n)+lh-1,sizeof(double));
   ydummyhh = (double *)calloc(max(m,n)+lh-1,sizeof(double));
-  g0 = (double *)calloc(lh,sizeof(double));
-  g1 = (double *)calloc(lh,sizeof(double));
   
   if (n==1){
     n = m;
     m = 1;
   }
-  /* analysis lowpass and highpass */
-  for (i=0; i<lh; i++){
-    g0[i] = h[i]/2;
-    g1[i] = h[lh-i-1]/2;
-  }
-  for (i=1; i<=lh; i+=2)
-    g1[i] = -g1[i];
-  
+
   lhm1 = lh - 1;
   /* 2^L */
   sample_f = 1;
@@ -202,8 +187,6 @@ int m, n, lh, L;
   free((void *)ydummylh);
   free((void *)ydummyhl);
   free((void *)ydummyhh);
-  free((void *)g0);
-  free((void *)g1);
 }
 
 #ifdef __STDC__

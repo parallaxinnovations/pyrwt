@@ -82,16 +82,10 @@ MATLAB description:
 #define mat(a, i, j) (*(a + (n*(i)+j)))  /* macro for matrix indices */
 #define max(a, b) ((a) > (b) ? (a) : (b))
 
-#ifdef __STDC__
-void MRDWT(double *x, int m, int n, double *h, int lh, int L,
+void MRDWT(double *x, int m, int n, double *h0, double *h1, int lh, int L,
       double *yl, double *yh)
-#else
-MRDWT(x, m, n, h, lh, L, yl, yh)
-double *x, *h, *yl, *yh;
-int m, n, lh, L;
-#endif
 {
-  double  *h0, *h1, *ydummyll, *ydummylh, *ydummyhl;
+  double  *ydummyll, *ydummylh, *ydummyhl;
   double *ydummyhh, *xdummyl , *xdummyh;
   long i;
   int actual_L, actual_m, actual_n, c_o_a, ir, n_c, n_cb;
@@ -102,20 +96,11 @@ int m, n, lh, L;
   ydummylh = (double *)calloc(max(m,n),sizeof(double));
   ydummyhl = (double *)calloc(max(m,n),sizeof(double));
   ydummyhh = (double *)calloc(max(m,n),sizeof(double));
-  h0 = (double *)calloc(lh,sizeof(double));
-  h1 = (double *)calloc(lh,sizeof(double));
 
   if (n==1){
     n = m;
     m = 1;
   }  
-  /* analysis lowpass and highpass */
-  for (i=0; i<lh; i++){
-    h0[i] = h[lh-i-1];
-    h1[i] =h[i];
-  }
-  for (i=0; i<lh; i+=2)
-    h1[i] = -h1[i];
   
   actual_m = 2*m;
   actual_n = 2*n;
@@ -192,8 +177,6 @@ int m, n, lh, L;
   free((void *)ydummylh);
   free((void *)ydummyhl);
   free((void *)ydummyhh);
-  free((void *)h0);
-  free((void *)h1);
 }
 
 #ifdef __STDC__

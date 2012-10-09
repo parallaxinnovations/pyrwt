@@ -6,13 +6,15 @@ Tutorial
 2D Example:
 
 >>> from scipy.misc import lena
+>>> import matplotlib.pyplot as plt
 >>> from rwt import dwt, idwt
->>> from rwt.utilities import makeSignal
 >>> from rwt.wavelets import daubcqf
 >>> img = lena()
->>> h = daubcqf(4, 'min')[0]
+>>> h0, h1 = daubcqf(4, 'min')
 >>> L = 1
 >>> y, L = dwt(img, h, L)
+>>> plt.imshow(y)
+>>> plt.show()
 
 2D Example's output and explanation:
 

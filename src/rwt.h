@@ -2,7 +2,7 @@
 //
 // mdwt declarations
 //
-void MDWT(double *x, int m, int n, double *h, int lh, int L, double *y);
+void MDWT(double *x, int m, int n, double *h0, double *h1, int lh, int L, double *y);
 
 void fpsconv(double *x_in, int lx, double *h0, double *h1, int lhm1, 
 	double *x_outl, double *x_outh);
@@ -11,7 +11,7 @@ void fpsconv(double *x_in, int lx, double *h0, double *h1, int lhm1,
 //
 // midwt declarations
 //
-void MIDWT(double *x, int m, int n, double *h, int lh, int L, double *y);
+void MIDWT(double *x, int m, int n, double *h0, double *h1, int lh, int L, double *y);
 
 void bpsconv(double *x_out, int lx, double *g0, double *g1, int lhm1, 
 	int lhhm1, double *x_inl, double *x_inh);
@@ -20,7 +20,7 @@ void bpsconv(double *x_out, int lx, double *g0, double *g1, int lhm1,
 //
 // mrdwt declarations
 //
-void MRDWT(double *x, int m, int n, double *h, int lh, int L,
+void MRDWT(double *x, int m, int n, double *h0, double *h1, int lh, int L,
       double *yl, double *yh);
 
 void fpconv(double *x_in, int lx, double *h0, double *h1, int lh,
@@ -29,7 +29,7 @@ void fpconv(double *x_in, int lx, double *h0, double *h1, int lh,
 //
 // mirdwt declarations
 //
-void MIRDWT(double *x, int m, int n, double *h, int lh, int L,
+void MIRDWT(double *x, int m, int n, double *h0, double *h1, int lh, int L,
        double *yl, double *yh);
 
 void bpconv(double *x_out, int lx, double *g0, double *g1, int lh,
@@ -44,7 +44,8 @@ void DWTAXIS(
     int n,
     int prod_h,
     int stride,
-    double *h,
+    double *h0,
+    double *h1,
     int lh,
     int L,
     double *y
@@ -55,7 +56,8 @@ void IDWTAXIS(
     int n,
     int prod_h,
     int stride,
-    double *h,
+    double *h0,
+    double *h1,
     int lh,
     int L,
     double *y

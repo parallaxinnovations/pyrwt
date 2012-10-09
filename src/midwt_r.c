@@ -76,34 +76,19 @@ decription of the matlab call:
 #define mat(a, i, j) (*(a + (n*(i)+j)))  /* macro for matrix indices */
 
 
-#ifdef __STDC__
-void MIDWT(double *x, int m, int n, double *h, int lh, int L, double *y)
-#else
-MIDWT(x, m, n, h, lh, L, y)
-double *x, *h, *y;
-int m, n, lh, L;
-#endif
+void MIDWT(double *x, int m, int n, double *g0, double *g1, int lh, int L, double *y)
 {
-  double  *g0, *g1, *ydummyl, *ydummyh, *xdummy;
+  double  *ydummyl, *ydummyh, *xdummy;
   long i;
   int actual_L, actual_m, actual_n, r_o_a, c_o_a, ir, ic, lhm1, lhhm1, sample_f;
   xdummy = (double *)calloc(max(m,n),sizeof(double));
   ydummyl = (double *)calloc(max(m,n)+lh/2-1,sizeof(double));
   ydummyh = (double *)calloc(max(m,n)+lh/2-1,sizeof(double));
-  g0 = (double *)calloc(lh,sizeof(double));
-  g1 = (double *)calloc(lh,sizeof(double));
 
   if (n==1){
     n = m;
     m = 1;
   }
-  /* synthesis lowpass and highpass */
-  for (i=0; i<lh; i++){
-    g0[i] = h[i];
-    g1[i] = h[lh-i-1];
-  }
-  for (i=1; i<=lh; i+=2)
-    g1[i] = -g1[i];
   
   lhm1 = lh - 1;
   lhhm1 = lh/2 - 1;
@@ -166,8 +151,6 @@ int m, n, lh, L;
   free((void *)xdummy);
   free((void *)ydummyl);
   free((void *)ydummyh);
-  free((void *)g0);
-  free((void *)g1);
 }
 
 

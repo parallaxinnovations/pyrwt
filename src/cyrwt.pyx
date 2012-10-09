@@ -76,17 +76,19 @@ def _prepareInputs(src_array, h, L):
     return src_array, L, m, n, lh
 
 
-def dwt(x, h, L=None):
+def dwt(x, h0, h1, L=None):
     """	
     Computes the discrete wavelet transform y for a 1D or 2D input
-    signal x using the scaling filter h.
+    signal x using the scaling filter h0 and wavelet filter h1.
 
     Parameters
     ----------
     x : array-like, shape = [n] or [m, n]
         Finite length 1D or 2D signal (implicitly periodized)
-    h : array-like, shape = [n]
+    h0 : array-like, shape = [n]
         Scaling filter
+    h1 : array-like, shape = [n]
+        Wavelet filter
     L : integer, optional (default=None)
         Number of levels. In the case of a 1D signal, length(x) must be
         divisible by 2**L; in the case of a 2D signal, the row and the
@@ -110,9 +112,9 @@ def dwt(x, h, L=None):
     >>> from rwt.utilities import makeSignal
     >>> from rwt.wavelets import daubcqf
     >>> img = lena()
-    >>> h = daubcqf(4, 'min')[0]
+    >>> h0, h1 = daubcqf(4, 'min')
     >>> L = 1
-    >>> y, L = dwt(img, h, L)
+    >>> y, L = dwt(img, h0, h1, L)
 
     See Also
     --------
@@ -120,17 +122,19 @@ def dwt(x, h, L=None):
 
     """
     
-    x, L, m, n, lh = _prepareInputs(x, h, L)
+    x, L, m, n, lh = _prepareInputs(x, h0, L)
 
     cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = np.array(x, dtype=DTYPEd, copy=False, order='C').ravel()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h0 = np.array(h0, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h1 = np.array(h1, dtype=DTYPEd, copy=False, order='C').ravel()
     cdef np.ndarray[DTYPEd_t, ndim=1]  np_y = np.zeros(x.size, dtype=DTYPEd)
     
     MDWT(
         <double *>np_x.data,
         m,
         n,
-        <double *>np_h.data,
+        <double *>np_h0.data,
+        <double *>np_h1.data,
         lh,
         L,
         <double *>np_y.data
@@ -142,18 +146,20 @@ def dwt(x, h, L=None):
     return y, L
 
 
-def idwt(y, h, L=None):
+def idwt(y, h0, h1, L=None):
     """
-    Computes the inverse discrete wavelet transform x for a 1D or
-    2D input signal y using the scaling filter h.
+    Computes the inverse discrete wavelet transform x for a 1D or 2D
+    input signal y using the scaling filter h0 and wavelet filter h1.
 
     Parameters
     ----------
     y : array-like, shape = [n] or [m, n]
         Finite length 1D or 2D input signal (implicitly periodized)
 	(see function mdwt to find the structure of y)
-    h : array-like, shape = [n]
+    h0 : array-like, shape = [n]
         Scaling filter
+    h1 : array-like, shape = [n]
+        Wavelet filter
     L : integer, optional (default=None)
         Number of levels. In the case of a 1D signal, len(x) must be
         divisible by 2**L; in the case of a 2D signal, the row and the
@@ -175,9 +181,9 @@ def idwt(y, h, L=None):
     >>> from rwt.utilities import makeSignal
     >>> from rwt.wavelets import daubcqf
     >>> xin = makeSignal('LinChirp', 8)
-    >>> h = daubcqf(4, 'min')[0]
+    >>> h0, h1 = daubcqf(4, 'min')
     >>> L = 1
-    >>> y, L = dwt(xin, h, L)
+    >>> y, L = dwt(xin, h0, h1, L)
     >>> print y
     [0.1912, 0.8821, 1.4257, 0.3101, -0.0339, 0.1001, 0.2201, 0.0000]
     >>> x, L = idwt(y, h, L)
@@ -189,17 +195,19 @@ def idwt(y, h, L=None):
     dwt, rdwt, irdwt
     """
     
-    y, L, m, n, lh = _prepareInputs(y, h, L)
+    y, L, m, n, lh = _prepareInputs(y, h0, L)
     
     cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = np.zeros(y.size, dtype=DTYPEd)
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h0 = np.array(h0, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h1 = np.array(h1, dtype=DTYPEd, copy=False, order='C').ravel()
     cdef np.ndarray[DTYPEd_t, ndim=1]  np_y = np.array(y, dtype=DTYPEd, copy=False, order='C').ravel()
     
     MIDWT(
         <double *>np_x.data,
         m,
         n,
-        <double *>np_h.data,
+        <double *>np_h0.data,
+        <double *>np_h1.data,
         lh,
         L,
         <double *>np_y.data
@@ -211,7 +219,7 @@ def idwt(y, h, L=None):
     return x, L
 
 
-def rdwt(x, h, L=None):
+def rdwt(x, h0, h1, L=None):
     """
     Computes the redundant discrete wavelet transform y
     for a 1D  or 2D input signal. (Redundant means here that the
@@ -225,8 +233,10 @@ def rdwt(x, h, L=None):
     ----------
     x : array-like, shape = [n] or [m, n]
         Finite length 1D or 2D signal (implicitly periodized)
-    h : array-like, shape = [n]
+    h0 : array-like, shape = [n]
         Scaling filter
+    h1 : array-like, shape = [n]
+        Wavelet filter
     L : integer, optional (default=None)
         Number of levels. In the case of a 1D signal, len(x) must be
         divisible by 2**L; in the case of a 2D signal, the row and the
@@ -252,10 +262,11 @@ def rdwt(x, h, L=None):
 
     """
 
-    x, L, m, n, lh = _prepareInputs(x, h, L)
+    x, L, m, n, lh = _prepareInputs(x, h0, L)
     
     cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = np.array(x, dtype=DTYPEd, copy=False, order='C').ravel()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h0 = np.array(h0, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h1 = np.array(h1, dtype=DTYPEd, copy=False, order='C').ravel()
     cdef np.ndarray[DTYPEd_t, ndim=1]  np_yl = np.zeros(x.size, dtype=DTYPEd)
     cdef np.ndarray[DTYPEd_t, ndim=2]  np_yh
     
@@ -268,7 +279,8 @@ def rdwt(x, h, L=None):
         <double *>np_x.data,
         m,
         n,
-        <double *>np_h.data,
+        <double *>np_h0.data,
+        <double *>np_h1.data,
         lh,
         L,
         <double *>np_yl.data,
@@ -281,7 +293,7 @@ def rdwt(x, h, L=None):
     return yl, np_yh, L
     
 
-def irdwt(yl, yh, h, L=None):
+def irdwt(yl, yh, h0, h1, L=None):
     """
     Computes the inverse redundant discrete wavelet
     transform x  for a 1D or 2D input signal. (Redundant means here
@@ -298,8 +310,10 @@ def irdwt(yl, yh, h, L=None):
         Lowpass component
     yh : array-like, shape = [n] or [m, n]
         Highpass component
-    h : array-like, shape = [n]
+    h0 : array-like, shape = [n]
         Scaling filter
+    h1 : array-like, shape = [n]
+        Wavelet filter
     L : integer
 	number of levels. In the case of a 1D signal, 
 	len(yl) must  be divisible by 2**L;
@@ -323,7 +337,7 @@ def irdwt(yl, yh, h, L=None):
 
     """
 
-    yl, L, m, n, lh = _prepareInputs(yl, h, L)
+    yl, L, m, n, lh = _prepareInputs(yl, h0, L)
     
     yh = np.array(yh, copy=False, order='C')
     mh, nh = yh.shape
@@ -337,7 +351,8 @@ def irdwt(yl, yh, h, L=None):
         assert(m == mh and nh == n*L, "Dimensions of first two input vectors not consistent!")
 
     cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = np.zeros(yl.size, dtype=DTYPEd)
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h0 = np.array(h0, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h1 = np.array(h1, dtype=DTYPEd, copy=False, order='C').ravel()
     cdef np.ndarray[DTYPEd_t, ndim=1]  np_yl = np.array(yl, dtype=DTYPEd, copy=False, order='C').ravel()
     cdef np.ndarray[DTYPEd_t, ndim=1]  np_yh = np.array(yh, dtype=DTYPEd, copy=False, order='C').ravel()
     
@@ -345,7 +360,8 @@ def irdwt(yl, yh, h, L=None):
         <double *>np_x.data,
         m,
         n,
-        <double *>np_h.data,
+        <double *>np_h0.data,
+        <double *>np_h1.data,
         lh,
         L,
         <double *>np_yl.data,
@@ -388,17 +404,19 @@ def _prepareInputs2(src_array, h, L, axis):
     return src_array, L, n, stride, prod_h, lh
 
 
-def dwtaxis(x, h, axis=0, L=None):
+def dwtaxis(x, h0, h1, axis=0, L=None):
     """	
-    Computes the discrete wavelet transform over signal x
-    along a specific axis using the scaling filter h.
+    Computes the discrete wavelet transform over signal x along a specified
+    axis using the scaling filter h0, and wavelet filter h1.
 
     Parameters
     ----------
     x : array-like, shape = Arbitrary dimension
         Input signal
-    h : array-like, shape = [n]
+    h0 : array-like, shape = [n]
         Scaling filter
+    h1 : array-like, shape = [n]
+        Wavelet filter
     axis : integer, optional (default=0)
         The axis of x for which to perform the transform.
     L : integer, optional (default=None)
@@ -421,12 +439,13 @@ def dwtaxis(x, h, axis=0, L=None):
     """
     
     
-    x, L, n, stride, prod_h, lh = _prepareInputs2(x, h, L, axis)
+    x, L, n, stride, prod_h, lh = _prepareInputs2(x, h0, L, axis)
     
     y = np.empty(x.shape, dtype=DTYPEd, order='C')
     
     cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = np.array(x, dtype=DTYPEd, copy=False, order='C').ravel()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h0 = np.array(h0, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h1 = np.array(h1, dtype=DTYPEd, copy=False, order='C').ravel()
     cdef np.ndarray[DTYPEd_t, ndim=1]  np_y = y.ravel()
     
     DWTAXIS(
@@ -434,7 +453,8 @@ def dwtaxis(x, h, axis=0, L=None):
         n,
 	prod_h,
 	stride,
-        <double *>np_h.data,
+        <double *>np_h0.data,
+        <double *>np_h1.data,
         lh,
         L,
         <double *>np_y.data
@@ -443,17 +463,19 @@ def dwtaxis(x, h, axis=0, L=None):
     return y, L
 
 
-def idwtaxis(y, h, axis=0, L=None):
+def idwtaxis(y, h0, h1, axis=0, L=None):
     """	
-    Computes the inverse discrete wavelet transform over signal x
-    along a specific axis using the scaling filter h.
+    Computes the inverse discrete wavelet transform over signal x along a
+    specified axis using the scaling filter h0, and wavelet filter h1.
 
     Parameters
     ----------
     y : array-like, shape = Arbitrary dimension
         Input signal
-    h : array-like, shape = [n]
+    h0 : array-like, shape = [n]
         Scaling filter
+    h1 : array-like, shape = [n]
+        Wavelet filter
     axis : integer, optional (default=0)
         The axis of x for which to perform the transform.
     L : integer, optional (default=None)
@@ -476,12 +498,13 @@ def idwtaxis(y, h, axis=0, L=None):
     """
     
     
-    y, L, n, stride, prod_h, lh = _prepareInputs2(y, h, L, axis)
+    y, L, n, stride, prod_h, lh = _prepareInputs2(y, h0, L, axis)
     
     x = np.empty(y.shape, dtype=DTYPEd, order='C')
     
     cdef np.ndarray[DTYPEd_t, ndim=1]  np_y = np.array(y, dtype=DTYPEd, copy=False, order='C').ravel()
-    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h = np.array(h, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h0 = np.array(h0, dtype=DTYPEd, copy=False, order='C').ravel()
+    cdef np.ndarray[DTYPEd_t, ndim=1]  np_h1 = np.array(h1, dtype=DTYPEd, copy=False, order='C').ravel()
     cdef np.ndarray[DTYPEd_t, ndim=1]  np_x = x.ravel()
     
     IDWTAXIS(
@@ -489,7 +512,8 @@ def idwtaxis(y, h, axis=0, L=None):
         n,
 	prod_h,
 	stride,
-        <double *>np_h.data,
+        <double *>np_h0.data,
+        <double *>np_h1.data,
         lh,
         L,
         <double *>np_y.data

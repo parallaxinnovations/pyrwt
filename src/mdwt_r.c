@@ -71,22 +71,14 @@ Change History: Fixed the code such that 1D vectors passed to it can be in
 #define max(A,B) (A > B ? A : B)
 #define mat(a, i, j) (*(a + (n*(i)+j)))  /* macro for matrix indices */
 
-#ifdef __STDC__
-void MDWT(double *x, int m, int n, double *h, int lh, int L, double *y)
-#else
-MDWT(x, m, n, h, lh, L, y)
-double *x, *h, *y;
-int m, n, lh, L;
-#endif
+void MDWT(double *x, int m, int n, double *h0, double *h1, int lh, int L, double *y)
 {
-  double  *h0, *h1, *ydummyl, *ydummyh, *xdummy;
+  double  *ydummyl, *ydummyh, *xdummy;
   long i;
   int actual_L, actual_m, actual_n, r_o_a, c_o_a, ir, ic, lhm1;
   xdummy = (double *)calloc(max(m,n)+lh-1,sizeof(double));
   ydummyl = (double *)calloc(max(m,n),sizeof(double));
   ydummyh = (double *)calloc(max(m,n),sizeof(double));
-  h0 = (double *)calloc(lh,sizeof(double));
-  h1 = (double *)calloc(lh,sizeof(double));
   
   
   /* analysis lowpass and highpass */
@@ -94,12 +86,6 @@ int m, n, lh, L;
     n = m;
     m = 1;
   }
-  for (i=0; i<lh; i++){
-    h0[i] = h[lh-i-1];
-    h1[i] =h[i];
-  }
-  for (i=0; i<lh; i+=2)
-    h1[i] = -h1[i];
   
   lhm1 = lh - 1;
   actual_m = 2*m;
@@ -155,8 +141,6 @@ int m, n, lh, L;
   free((void *)xdummy);
   free((void *)ydummyl);
   free((void *)ydummyh);
-  free((void *)h0);
-  free((void *)h1);
 }
 
 

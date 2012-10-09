@@ -11,6 +11,12 @@ may not be enough to give full guidelines on their uses.
 .. automodule:: rwt.wavelets
 
 
+.. autofunction:: rwt.wavelets.waveletCoeffs
+
+
+.. autofunction:: rwt.wavelets.waveletlist
+
+
 .. autofunction:: rwt.wavelets.daubcqf
 
 

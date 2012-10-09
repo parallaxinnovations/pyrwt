@@ -91,23 +91,24 @@ def makeSignal(signal_name='AllSig', N=512):
     Parameters
     ----------
     signal_name : string, optional (default='AllSig')
-        Name of the desired signal. Supported values
-        'AllSig' (Returns a list with all the signals)
-        'HeaviSine'
-        'Bumps'
-        'Blocks'
-        'Doppler'
-        'Ramp'
-        'Cusp'
-        'Sing'
-        'HiSine'
-        'LoSine'
-        'LinChirp'
-        'TwoChirp'
-        'QuadChirp'
-        'MishMash'
-        'Werner Sorrows' (Heisenberg)
-        'Leopold' (Kronecker)
+        Name of the desired signal. Supported values:
+            * 'AllSig' (Returns a list with all the signals)
+            * 'HeaviSine'
+            * 'Bumps'
+            * 'Blocks'
+            * 'Doppler'
+            * 'Ramp'
+            * 'Cusp'
+            * 'Sing'
+            * 'HiSine'
+            * 'LoSine'
+            * 'LinChirp'
+            * 'TwoChirp'
+            * 'QuadChirp'
+            * 'MishMash'
+            * 'Werner Sorrows' (Heisenberg)
+            * 'Leopold' (Kronecker)
+            
     N : integer, optional (default=512)
         Length in samples of the desired signal
 

@@ -18,7 +18,7 @@ import sys
 
 NAME = 'pyrwt'
 PACKAGE_NAME = 'rwt'
-VERSION = '0.1'
+VERSION = '0.2'
 DESCRIPTION = 'A cython wrapper for the Rice Wavelet Toolbox'
 LONG_DESCRIPTION = """
 pyrwt is a python package that uses cython to wrap the
