@@ -3,7 +3,7 @@
 License for pyrwt
 =================
 
-Copyright (c) 2012 by the Amit Aides.
+Copyright (c) 2012 by Amit Aides.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
