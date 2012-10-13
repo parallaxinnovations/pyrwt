@@ -80,10 +80,20 @@ MATLAB description:
 
 
 #define max(a, b) ((a) > (b) ? (a) : (b))
-#define mat(a, i, j) (*(a + (n*(i)+j)))  /* macro for matrix indices */
+#define mat(a, i, j, stride) (*(a + stride*(i)+j))  /* macro for matrix indices */
 
-void MIRDWT(double *x, int m, int n, double *g0, double *g1, int lh, int L,
-       double *yl, double *yh)
+void
+MIRDWT(
+   double *x,
+   int m,
+   int n,
+   double *g0,
+   double *g1,
+   int lh,
+   int L,
+   double *yl,
+   double *yh
+   )
 {
   double *ydummyll, *ydummylh, *ydummyhl;
   double *ydummyhh, *xdummyl , *xdummyh, *xh;
@@ -97,11 +107,20 @@ void MIRDWT(double *x, int m, int n, double *g0, double *g1, int lh, int L,
   ydummylh = (double *)calloc(max(m,n)+lh-1,sizeof(double));
   ydummyhl = (double *)calloc(max(m,n)+lh-1,sizeof(double));
   ydummyhh = (double *)calloc(max(m,n)+lh-1,sizeof(double));
+  int yhn;
   
   if (n==1){
     n = m;
     m = 1;
   }
+
+  //
+  // Calculate the size of the output matrix (used for mat indexing)
+  //
+  if (m==1)
+      yhn = n*L;
+  else
+      yhn = 3*n*L;
 
   lhm1 = lh - 1;
   /* 2^L */
@@ -132,10 +151,10 @@ void MIRDWT(double *x, int m, int n, double *g0, double *g1, int lh, int L,
 	  ir = -sample_f + n_r;
 	  for (i=0; i<actual_m; i++){    
 	    ir = ir + sample_f;
-	    ydummyll[i+lhm1] = mat(x, ir, ic);  
-	    ydummylh[i+lhm1] = mat(yh, ir, c_o_a+ic);  
-	    ydummyhl[i+lhm1] = mat(yh, ir,c_o_a+n+ic);  
-	    ydummyhh[i+lhm1] = mat(yh, ir, c_o_a_p2n+ic);   
+	    ydummyll[i+lhm1] = mat(x, ir, ic, n);  
+	    ydummylh[i+lhm1] = mat(yh, ir, c_o_a+ic, yhn);  
+	    ydummyhl[i+lhm1] = mat(yh, ir,c_o_a+n+ic, yhn);  
+	    ydummyhh[i+lhm1] = mat(yh, ir, c_o_a_p2n+ic, yhn);   
 	  }
 	  /* perform filtering and adding: first LL/LH, then HL/HH */
 	  bpconv(xdummyl, actual_m, g0, g1, lh, ydummyll, ydummylh); 
@@ -144,8 +163,8 @@ void MIRDWT(double *x, int m, int n, double *g0, double *g1, int lh, int L,
 	  ir = -sample_f + n_r;
 	  for (i=0; i<actual_m; i++){    
 	    ir = ir + sample_f;
-	    mat(x, ir, ic) = xdummyl[i];  
-	    mat(xh, ir, ic) = xdummyh[i];  
+	    mat(x, ir, ic, n) = xdummyl[i];  
+	    mat(xh, ir, ic, n) = xdummyh[i];  
 	  }
 	}
       }
@@ -159,11 +178,11 @@ void MIRDWT(double *x, int m, int n, double *g0, double *g1, int lh, int L,
 	ic = -sample_f + n_c;
 	for  (i=0; i<actual_n; i++){    
 	  ic = ic + sample_f;
-	  ydummyll[i+lhm1] = mat(x, ir, ic);  
+	  ydummyll[i+lhm1] = mat(x, ir, ic, n);  
 	  if (m>1)
-	    ydummyhh[i+lhm1] = mat(xh, ir, ic);  
+	    ydummyhh[i+lhm1] = mat(xh, ir, ic, n);  
 	  else
-	    ydummyhh[i+lhm1] = mat(yh, ir, c_o_a+ic);  
+	    ydummyhh[i+lhm1] = mat(yh, ir, c_o_a+ic, yhn);  
 	} 
 	/* perform filtering lowpass/highpass */
 	bpconv(xdummyl, actual_n, g0, g1, lh, ydummyll, ydummyhh); 
@@ -171,7 +190,7 @@ void MIRDWT(double *x, int m, int n, double *g0, double *g1, int lh, int L,
 	ic = -sample_f + n_c;
 	for (i=0; i<actual_n; i++){    
 	  ic = ic + sample_f;
-	  mat(x, ir, ic) = xdummyl[i];  
+	  mat(x, ir, ic, n) = xdummyl[i];  
 	}
       }
     }

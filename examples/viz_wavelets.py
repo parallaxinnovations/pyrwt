@@ -20,7 +20,7 @@ def vizWavelet(wavelet):
 class WLapp(HasTraits):
 
     noise_sigma = Range(0, 50.0, 16.0)
-    threshold = Range(0, 100.0, 50.0)
+    threshold = Range(0, 100.0, 5.0)
     threshold_type = Enum(('Soft', 'Hard'))
 
     traits_view = View(

@@ -471,7 +471,7 @@ def waveletlist():
     """
     
     wavelet_names = ['haar'] + WAVELETS_DICT.keys()
-    return wavelet_names
+    return sorted(wavelet_names)
 
     
 def waveletCoeffs(name):

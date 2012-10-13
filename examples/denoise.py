@@ -6,7 +6,10 @@ from rwt.utilities import softThreshold, hardThreshold
 
 def denoise(
     x,
-    h,
+    c0,
+    c1,
+    r0,
+    r1,
     wavelet_type=0,
     low_pass=False,
     c=None,
@@ -18,7 +21,7 @@ def denoise(
     """
     Generic program for wavelet based denoising.
     The program will denoise the signal x using the 2-band wavelet
-    system described by the filter h using either the traditional 
+    system described by the filters h0, h1 using either the traditional 
     discrete wavelet transform (DWT) or the linear shift invariant 
     discrete wavelet transform (also known as the undecimated DWT
     (UDWT)). 
@@ -27,8 +30,14 @@ def denoise(
     ----------
     x : array-like, shape = [n] or [m, n]
         Finite length 1D or 2D signal (implicitly periodized)
-    h : array-like, shape = [n]
+    c0 : array-like, shape = [n]
         Scaling filter
+    c1 : array-like, shape = [n]
+        wavelet filter
+    r0 : array-like, shape = [n]
+        inreverse scaling filter
+    r1 : array-like, shape = [n]
+        inverse wavelet filter
     wavelet_type : [0, 1], optional (default=0)
         Type of transform:
         0 - Discrete wavelet transform (DWT)
@@ -66,7 +75,8 @@ def denoise(
        
     """
 
-    assert wavelet_type in (0, 1), "Unknown denoising method. If it is any good we need to have a serious talk :-)"
+    assert wavelet_type in (0, 1), \
+           "Unknown denoising method. If it is any good we need to have a serious talk :-)"
 
     if c == None:
         if wavelet_type == 0:
@@ -74,7 +84,8 @@ def denoise(
         else:
             c = 3.6
 
-    assert threshold_type in (0, 1), 'Unknown threshold rule. Use either Soft (0) or Hard (1)'
+    assert threshold_type in (0, 1), \
+           'Unknown threshold rule. Use either Soft (0) or Hard (1)'
 
     if x.ndim == 1:
         n = nx = x.size
@@ -90,9 +101,10 @@ def denoise(
         #
         # Denoising by DWT
         #
-        xd, L = dwt(x, h, L)
+        xd, L = dwt(x, c0, c1, L)
         if threshold == 0:
-            assert var_estimator in (0, 1), 'Unknown threshold estimator, Use either MAD (0) or STD (1)'
+            assert var_estimator in (0, 1), \
+                   'Unknown threshold estimator, Use either MAD (0) or STD (1)'
 
             tmp = xd[int(mx/2):mx, int(nx/2):nx]
             if var_estimator == 0:
@@ -119,12 +131,12 @@ def denoise(
             else:
                 xd[ix, jx] = ykeep
 
-        xd, L = idwt(xd, h, L)
+        xd, L = idwt(xd, r0, r1, L)
     else:
         #
         # Denoising by UDWT
         #
-        xl, xh, L = rdwt(x, h, L)
+        xl, xh, L = rdwt(x, c0, c1, L)
         
         if x.ndim == 1:
             c_offset = 1
@@ -151,7 +163,7 @@ def denoise(
             if low_pass:
                 xl = hardThreshold(xl, threshold)
         
-        xd, L = irdwt(xl, xh, h, L)
+        xd, L = irdwt(xl, xh, r0, r1, L)
 
     xn = x - xd
 
@@ -162,23 +174,27 @@ if __name__ == '__main__':
     
     import matplotlib.pyplot as plt
     import scipy.misc as spm
-    from rwt.wavelets import daubcqf
+    from rwt.wavelets import daubcqf, waveletCoeffs
     
     lena = spm.lena()
     noisy_lena = lena + 25 * np.random.randn(*lena.shape)
     
-    h = daubcqf(6)[0]
-    denoised_lena, xn = denoise(noisy_lena, h)
+    c0, c1, r0, r1 = waveletCoeffs('haar')
+    denoised_lena, xn = denoise(noisy_lena, c0, c1, r0, r1, wavelet_type=0)
+    ud_denoised_lena, xn = denoise(noisy_lena, c0, c1, r0, r1, wavelet_type=1)
     
     plt.figure()
     plt.gray()
-    plt.subplot(131)
+    plt.subplot(221)
     plt.imshow(lena)
     plt.title('Original Image')
-    plt.subplot(132)
+    plt.subplot(222)
     plt.imshow(noisy_lena)
     plt.title('Noisy Image')
-    plt.subplot(133)
+    plt.subplot(223)
     plt.imshow(denoised_lena)
     plt.title('Denoised Image')
+    plt.subplot(224)
+    plt.imshow(ud_denoised_lena)
+    plt.title('Undecimated Denoised Image')
     plt.show()

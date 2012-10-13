@@ -79,11 +79,21 @@ MATLAB description:
 
 
 /*#define mat(a, i, j) (a[m*(j)+i]) */
-#define mat(a, i, j) (*(a + (n*(i)+j)))  /* macro for matrix indices */
+#define mat(a, i, j, stride) (*(a + stride*(i)+j))  /* macro for matrix indices */
 #define max(a, b) ((a) > (b) ? (a) : (b))
 
-void MRDWT(double *x, int m, int n, double *h0, double *h1, int lh, int L,
-      double *yl, double *yh)
+void
+MRDWT(
+    double *x,
+    int m,
+    int n,
+    double *h0,
+    double *h1,
+    int lh,
+    int L,
+    double *yl,
+    double *yh
+    )
 {
   double  *ydummyll, *ydummylh, *ydummyhl;
   double *ydummyhh, *xdummyl , *xdummyh;
@@ -96,12 +106,21 @@ void MRDWT(double *x, int m, int n, double *h0, double *h1, int lh, int L,
   ydummylh = (double *)calloc(max(m,n),sizeof(double));
   ydummyhl = (double *)calloc(max(m,n),sizeof(double));
   ydummyhh = (double *)calloc(max(m,n),sizeof(double));
+  int yhn;
 
   if (n==1){
     n = m;
     m = 1;
   }  
   
+  //
+  // Calculate the size of the output matrix (used for mat indexing)
+  //
+  if (m==1)
+      yhn = n*L;
+  else
+      yhn = 3*n*L;
+
   actual_m = 2*m;
   actual_n = 2*n;
   for (i=0; i<m*n; i++)
@@ -127,7 +146,7 @@ void MRDWT(double *x, int m, int n, double *h0, double *h1, int lh, int L,
 	ic = -sample_f + n_c;
 	for (i=0; i<actual_n; i++){    
 	  ic = ic + sample_f;
-	  xdummyl[i] = mat(yl, ir, ic);  
+	  xdummyl[i] = mat(yl, ir, ic, n);  
 	}
 	/* perform filtering lowpass/highpass */
 	fpconv(xdummyl, actual_n, h0, h1, lh, ydummyll, ydummyhh); 
@@ -135,8 +154,8 @@ void MRDWT(double *x, int m, int n, double *h0, double *h1, int lh, int L,
 	ic = -sample_f + n_c;
 	for  (i=0; i<actual_n; i++){    
 	  ic = ic + sample_f;
-	  mat(yl, ir, ic) = ydummyll[i];  
-	  mat(yh, ir, c_o_a+ic) = ydummyhh[i];  
+	  mat(yl, ir, ic, n) = ydummyll[i];  
+	  mat(yh, ir, c_o_a+ic, yhn) = ydummyhh[i];  
 	} 
       }
     }
@@ -150,8 +169,8 @@ void MRDWT(double *x, int m, int n, double *h0, double *h1, int lh, int L,
 	  ir = -sample_f + n_r;
 	  for (i=0; i<actual_m; i++){    
 	    ir = ir + sample_f;
-	    xdummyl[i] = mat(yl, ir, ic);  
-	    xdummyh[i] = mat(yh, ir,c_o_a+ic);  
+	    xdummyl[i] = mat(yl, ir, ic, n);  
+	    xdummyh[i] = mat(yh, ir,c_o_a+ic, yhn);  
 	  }
 	  /* perform filtering: first LL/LH, then HL/HH */
 	  fpconv(xdummyl, actual_m, h0, h1, lh, ydummyll, ydummylh); 
@@ -160,10 +179,10 @@ void MRDWT(double *x, int m, int n, double *h0, double *h1, int lh, int L,
 	  ir = -sample_f + n_r;
 	  for (i=0; i<actual_m; i++){    
 	    ir = ir + sample_f;
-	    mat(yl, ir, ic) = ydummyll[i];  
-	    mat(yh, ir, c_o_a+ic) = ydummylh[i];  
-	    mat(yh, ir,c_o_a+n+ic) = ydummyhl[i];  
-	    mat(yh, ir, c_o_a_p2n+ic) = ydummyhh[i];  
+	    mat(yl, ir, ic, n) = ydummyll[i];  
+	    mat(yh, ir, c_o_a+ic, yhn) = ydummylh[i];  
+	    mat(yh, ir,c_o_a+n+ic, yhn) = ydummyhl[i];  
+	    mat(yh, ir, c_o_a_p2n+ic, yhn) = ydummyhh[i];  
 	  }
 	}
       }
