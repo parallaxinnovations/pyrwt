@@ -1,9 +1,9 @@
 import numpy as np
-from rwt import dwt, idwt
+from rwt import dwt, idwt, rdwt, irdwt
 from rwt.utilities import softThreshold, hardThreshold
 from rwt.wavelets import daubcqf, waveletlist, waveletCoeffs
 import scipy.misc
-from enthought.traits.api import HasTraits, Range, on_trait_change, Float, Enum
+from enthought.traits.api import HasTraits, Range, on_trait_change, Float, Enum, Bool
 from enthought.traits.ui.api import View, Item, HGroup, Group, VGroup
 from enthought.chaco.api import Plot, ArrayPlotData, gray, jet
 from enthought.chaco.tools.api import PanTool, ZoomTool
@@ -22,6 +22,7 @@ class WLapp(HasTraits):
     noise_sigma = Range(0, 50.0, 16.0)
     threshold = Range(0, 100.0, 5.0)
     threshold_type = Enum(('Soft', 'Hard'))
+    undecimated = Bool()
 
     traits_view = View(
         VGroup(
@@ -35,6 +36,7 @@ class WLapp(HasTraits):
                     Item('noise_sigma'),
                     Item('threshold_type'),
                     Item('threshold'),
+                    Item('undecimated'),
                     Item('wavelet', label='Wavelet Name'),
                     ),
                 springy=True
@@ -100,16 +102,34 @@ class WLapp(HasTraits):
         """Denoise the image using wavelet"""
 
         c0, c1, r0, r1 = waveletCoeffs(self.wavelet)
-        WC, L = dwt(self.noise_image, c0, c1)
-        temp = np.sort(WC.ravel())
-        threshold = temp[int((len(temp)-1)*(100-self.threshold)/100)]
-        if self.threshold_type == 'Hard':
-            NWC = hardThreshold(WC, threshold)
+        
+        if self.undecimated:
+            WCL, WCH, L = rdwt(self.noise_image, c0, c1)
+            temp = np.concatenate((WCL.ravel(), WCH.ravel()))
+            temp = np.sort(temp)
+            threshold = temp[int((len(temp)-1)*(100-self.threshold)/100)]
+            if self.threshold_type == 'Hard':
+                NWCL = hardThreshold(WCL, threshold)
+                NWCH = hardThreshold(WCH, threshold)
+            else:
+                NWCL = softThreshold(WCL, threshold)
+                NWCH = softThreshold(WCH, threshold)
+            denoised_img = irdwt(NWCL, NWCH, r0, r1)[0]
+            wavelet = vizWavelet(NWCL)
         else:
-            NWC = softThreshold(WC, threshold)
-        return vizWavelet(NWC), idwt(NWC, r0, r1)[0]
+            WC, L = dwt(self.noise_image, c0, c1)
+            temp = np.sort(WC.ravel())
+            threshold = temp[int((len(temp)-1)*(100-self.threshold)/100)]
+            if self.threshold_type == 'Hard':
+                NWC = hardThreshold(WC, threshold)
+            else:
+                NWC = softThreshold(WC, threshold)
+            denoised_img = idwt(NWC, r0, r1)[0]
+            wavelet = vizWavelet(NWC)
+            
+        return wavelet, denoised_img
 
-    @on_trait_change('wavelet, threshold, threshold_type')
+    @on_trait_change('wavelet, threshold, threshold_type, undecimated')
     def _updateDenoise(self):
         """Denoise the image"""
 
