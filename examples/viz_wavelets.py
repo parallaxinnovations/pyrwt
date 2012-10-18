@@ -19,6 +19,7 @@ def vizWavelet(wavelet):
 
 class WLapp(HasTraits):
 
+    fill_ratio = Range(0, 1.0, 1.0)
     noise_sigma = Range(0, 50.0, 16.0)
     threshold = Range(0, 100.0, 5.0)
     threshold_type = Enum(('Soft', 'Hard'))
@@ -33,6 +34,7 @@ class WLapp(HasTraits):
                 ),
             HGroup(
                 Group(
+                    Item('fill_ratio'),
                     Item('noise_sigma'),
                     Item('threshold_type'),
                     Item('threshold'),
@@ -89,8 +91,22 @@ class WLapp(HasTraits):
 
         self.noise_image = scipy.misc.lena().astype(np.float32)
         self.noise_image += np.random.normal(0, self.noise_sigma, size=self.noise_image.shape)
+        
+        if self.fill_ratio > 0.99:
+            return
+        
+        #
+        # Create a binary mask
+        #
+        mask = np.zeros_like(self.noise_image, dtype=np.bool)
+        indices = np.arange(self.noise_image.size)
+        np.random.shuffle(indices)
+        indices = indices[:int(self.noise_image.size*self.fill_ratio)]
+        mask.ravel()[indices] = 1
+        
+        self.noise_image *= mask
 
-    @on_trait_change('noise_sigma')
+    @on_trait_change('noise_sigma, fill_ratio')
     def _updateNoiseImg(self):
         """Update noised image according to new noise sigma and denoise it"""
 
