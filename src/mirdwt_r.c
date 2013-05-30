@@ -100,6 +100,7 @@ MIRDWT(
   long i;
   int actual_L, actual_m, actual_n, c_o_a, ir, n_c, n_cb, lhm1;
   int ic, n_r, n_rb, c_o_a_p2n, sample_f;
+  int yhn;
   xh = (double *)calloc(m*n,sizeof(double));
   xdummyl = (double *)calloc(max(m,n),sizeof(double));
   xdummyh = (double *)calloc(max(m,n),sizeof(double));
@@ -107,7 +108,6 @@ MIRDWT(
   ydummylh = (double *)calloc(max(m,n)+lh-1,sizeof(double));
   ydummyhl = (double *)calloc(max(m,n)+lh-1,sizeof(double));
   ydummyhh = (double *)calloc(max(m,n)+lh-1,sizeof(double));
-  int yhn;
   
   if (n==1){
     n = m;
@@ -208,14 +208,9 @@ MIRDWT(
   free((void *)ydummyhh);
 }
 
-#ifdef __STDC__
+
 void bpconv(double *x_out, int lx, double *g0, double *g1, int lh,
        double *x_inl, double *x_inh)
-#else
-bpconv(x_out, lx, g0, g1, lh, x_inl, x_inh)
-double *x_inl, *x_inh, *g0, *g1, *x_out;
-int lx, lh;
-#endif
 {
   int i, j;
   double x0;

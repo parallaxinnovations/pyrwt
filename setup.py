@@ -18,7 +18,7 @@ import sys
 
 NAME = 'pyrwt'
 PACKAGE_NAME = 'rwt'
-VERSION = '0.2.1'
+VERSION = '0.2.2'
 DESCRIPTION = 'A cython wrapper for the Rice Wavelet Toolbox'
 LONG_DESCRIPTION = """
 pyrwt is a python package that uses cython to wrap the
@@ -36,8 +36,6 @@ CLASSIFIERS = [
     'Development Status :: 3 - Alpha',
     'Topic :: Scientific/Engineering'
 ]
-IPOPT_ICLUDE_DIRS=[]
-IPOPT_ICLUDE_DIRS += [np.get_include()]
 
 def main():
     setup(
@@ -64,7 +62,7 @@ def main():
                     'src/mrdwt_r.c',
                     'src/mirdwt_r.c',
                 ],
-                include_dirs=IPOPT_ICLUDE_DIRS
+                include_dirs=[np.get_include()]
             )
         ],
     )

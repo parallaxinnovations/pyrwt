@@ -100,13 +100,13 @@ MRDWT(
   long i;
   int actual_L, actual_m, actual_n, c_o_a, ir, n_c, n_cb;
   int ic, n_r, n_rb, c_o_a_p2n, sample_f;
+  int yhn;
   xdummyl = (double *)calloc(max(m,n)+lh-1,sizeof(double));
   xdummyh = (double *)calloc(max(m,n)+lh-1,sizeof(double));
   ydummyll = (double *)calloc(max(m,n),sizeof(double));
   ydummylh = (double *)calloc(max(m,n),sizeof(double));
   ydummyhl = (double *)calloc(max(m,n),sizeof(double));
   ydummyhh = (double *)calloc(max(m,n),sizeof(double));
-  int yhn;
 
   if (n==1){
     n = m;
@@ -198,14 +198,9 @@ MRDWT(
   free((void *)ydummyhh);
 }
 
-#ifdef __STDC__
+
 void fpconv(double *x_in, int lx, double *h0, double *h1, int lh,
        double *x_outl, double *x_outh)
-#else
-fpconv(x_in, lx, h0, h1, lh, x_outl, x_outh)
-double *x_in, *h0, *h1, *x_outl, *x_outh;
-int lx, lh;
-#endif
 {
   int i, j;
   double x0, x1;
