@@ -526,5 +526,5 @@ if __name__ == '__main__':
     N = 4
     TYPE = 'min'
     h_0, h_1 = daubcqf(N, TYPE)
-    print h_0
-    print h_1
+    print(h_0)
+    print(h_1)
