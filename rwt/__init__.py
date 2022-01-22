@@ -21,4 +21,4 @@ RWT is available under the
 .. codeauthor:: Amit Aides <amitibo@tx.technion.ac.il>
 """
 
-from .cyrwt import dwt, idwt, rdwt, irdwt, dwtaxis, idwtaxis
+from rwt.cyrwt import dwt, idwt, rdwt, irdwt, dwtaxis, idwtaxis
