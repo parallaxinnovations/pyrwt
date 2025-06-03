@@ -1,0 +1,59 @@
+[build-system]
+requires = [
+    "hatchling>=1.18.0",
+    "hatch-vcs",
+    "hatch-cython",
+    "numpy"
+]
+build-backend = "hatchling.build"
+
+[project]
+name = "pyrwt"
+dynamic = ["version"]
+description = "A cython wrapper for the Rice Wavelet Toolbox"
+readme = "README.rst"
+authors = [
+    { name = "Amit Aides", email = "amitibo@tx.technion.ac.il" }
+]
+license = { file = "LICENSE" }
+keywords = ["wavelets", "wavelet transform", "DWT"]
+classifiers = [
+    "License :: OSI Approved :: BSD License",
+    "Development Status :: 3 - Alpha",
+    "Topic :: Scientific/Engineering"
+]
+dependencies = [
+    "numpy"
+]
+
+[project.urls]
+Homepage = "https://github.com/amitibo/pyrwt"
+
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/",
+    "rwt/",
+    "README.rst",
+    "LICENSE"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["rwt"]
+
+[tool.hatch.build.hooks.cython]
+dependencies = ["numpy"]
+
+[[tool.hatch.build.hooks.cython.modules]]
+name = "rwt.cyrwt"
+sources = [
+    "src/cyrwt.pyx",
+    "src/dwtaxis.c",
+    "src/mdwt_r.c",
+    "src/midwt_r.c",
+    "src/mrdwt_r.c",
+    "src/mirdwt_r.c"
+]
+include-dirs = ["{env:NUMPY_INCLUDE_DIR:numpy.get_include()}"]

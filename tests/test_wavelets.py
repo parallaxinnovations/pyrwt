@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.misc import lena
 from rwt import dwt, idwt, rdwt, irdwt
 from rwt.wavelets import waveletCoeffs, waveletlist
 from numpy.testing import assert_allclose
@@ -22,7 +21,7 @@ def test_dwt():
                 atol=1e-06,
                 err_msg='Failed dwt/idwt for wavelet type %s' % wavelet
             )
-        except Exception, e:
+        except (Exception, e):
             if wavelet not in ('dmey',):
                 raise
 
@@ -42,7 +41,7 @@ def test_rdwt():
                 atol=1e-06,
                 err_msg='Failed rdwt/irdwt for wavelet type %s' % wavelet
             )
-        except Exception, e:
+        except (Exception, e):
             if wavelet not in ('dmey',):
                 raise
 
