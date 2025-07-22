@@ -42,11 +42,15 @@ include = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["rwt"]
+include = [
+    "rwt/cyrwt.*.so", # For Linux/macOS
+    "rwt/cyrwt.pyd"   # For Windows
+]
 
 [tool.hatch.build.hooks.cython]
 dependencies = ["numpy"]
 
-[[tool.hatch.build.hooks.cython.modules]]
+[tool.hatch.build.hooks.cython.modules]
 name = "rwt.cyrwt"
 sources = [
     "src/cyrwt.pyx",
@@ -57,3 +61,4 @@ sources = [
     "src/mirdwt_r.c"
 ]
 include-dirs = ["{env:NUMPY_INCLUDE_DIR:numpy.get_include()}"]
+output-dir = "rwt"
